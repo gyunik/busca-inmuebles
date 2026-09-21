@@ -1,0 +1,1 @@
+@echo off\ntitle Actualizador Offline de Inmuebles\necho Ejecutando actualizacion offline de inmuebles reales...\npython actualizar_base_de_datos.py\necho.\npause\n
