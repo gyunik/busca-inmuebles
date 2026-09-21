@@ -187,7 +187,7 @@
         group_duplicates: false,
         sort_by: 'newest',
         page: 1,
-        page_size: 40
+        page_size: 150
       });
 
       const [searchInputValue, setSearchInputValue] = useState('');
@@ -806,7 +806,8 @@
           mapInstanceRef.current = map;
           markersLayerRef.current = L.markerClusterGroup({
             showCoverageOnHover: false,
-            maxClusterRadius: 35,
+            maxClusterRadius: 18,
+            disableClusteringAtZoom: 14,
             spiderfyOnMaxZoom: true,
             iconCreateFunction: function (cluster) {
               const count = cluster.getChildCount();
@@ -834,9 +835,9 @@
             const base = NEIGHBORHOOD_COORDS[p.neighborhood] || NEIGHBORHOOD_COORDS["Caballito"] || [-34.6186, -58.4428];
             const seed = p.id || 1;
             const angle = (seed * 137.5) * (Math.PI / 180);
-            const radius = 0.0012 + ((seed % 25) / 25) * 0.0045;
+            const radius = 0.0016 + ((seed % 35) / 35) * 0.0065;
             lat = base[0] + Math.sin(angle) * radius;
-            lng = base[1] + Math.cos(angle) * radius * 1.25;
+            lng = base[1] + Math.cos(angle) * radius * 1.35;
           }
 
           bounds.push([lat, lng]);
