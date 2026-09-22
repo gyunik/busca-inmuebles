@@ -20,6 +20,9 @@ from backend.app.services.deduplication_service import run_deduplication
 from backend.app.core.database import SessionLocal
 from backend.app.models.property_model import Property, PriceHistory
 from backend.app.services.scraper_runner import save_scraped_items
+from backend.app.scrapers.remax_scraper import RemaxScraper
+from backend.app.scrapers.cabaprop_scraper import CabaPropScraper
+from backend.app.scrapers.properati_scraper import ProperatiScraper
 
 TARGET_NEIGHBORHOODS = ["Parque Chas", "Villa Urquiza", "Villa del Parque"]
 MAX_PRICE_USD = 160000
@@ -354,17 +357,35 @@ async def run_full_deep_sweep():
     all_scraped = []
     
     async with httpx.AsyncClient(headers=HEADERS, limits=limits, verify=False, follow_redirects=True) as client:
-        zp_res, meli_res = await asyncio.gather(
-            scrape_zonaprop_deep(client),
-            scrape_meli_deep(client)
+        zp_task = scrape_zonaprop_deep(client)
+        meli_task = scrape_meli_deep(client)
+        remax_task = RemaxScraper().scrape(property_type="ph", zone="capital-federal", max_pages=5)
+        caba_task = CabaPropScraper().scrape(property_type="ph", zone="capital-federal", max_pages=4)
+        prop_task = ProperatiScraper().scrape(property_type="ph", zone="capital-federal", max_pages=3)
+        
+        zp_res, meli_res, remax_res, caba_res, prop_res = await asyncio.gather(
+            zp_task, meli_task, remax_task, caba_task, prop_task, return_exceptions=True
         )
+        
+        zp_res = zp_res if isinstance(zp_res, list) else []
+        meli_res = meli_res if isinstance(meli_res, list) else []
+        remax_res = [r for r in remax_res if isinstance(r, dict) and r.get("neighborhood") in TARGET_NEIGHBORHOODS and (r.get("price_usd") or 0) <= MAX_PRICE_USD] if isinstance(remax_res, list) else []
+        caba_res = [r for r in caba_res if isinstance(r, dict) and r.get("neighborhood") in TARGET_NEIGHBORHOODS and (r.get("price_usd") or 0) <= MAX_PRICE_USD] if isinstance(caba_res, list) else []
+        prop_res = [r for r in prop_res if isinstance(r, dict) and r.get("neighborhood") in TARGET_NEIGHBORHOODS and (r.get("price_usd") or 0) <= MAX_PRICE_USD] if isinstance(prop_res, list) else []
+
         all_scraped.extend(zp_res)
         all_scraped.extend(meli_res)
+        all_scraped.extend(remax_res)
+        all_scraped.extend(caba_res)
+        all_scraped.extend(prop_res)
         
     print("\n" + "=" * 65)
     print(f"EXTRACCIÓN FINALIZADA: {len(all_scraped)} publicaciones totales obtenidas:")
     print(f" - Zonaprop: {len(zp_res)}")
     print(f" - Mercado Libre: {len(meli_res)}")
+    print(f" - RE/MAX: {len(remax_res)}")
+    print(f" - CabaProp: {len(caba_res)}")
+    print(f" - Properati: {len(prop_res)}")
     print("=" * 65)
     
     db = SessionLocal()

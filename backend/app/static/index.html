@@ -506,22 +506,33 @@
 
               <div>
                 <h4 className="font-bold text-gray-700 uppercase mb-2">Portales</h4>
-                {['mercadolibre', 'zonaprop', 'argenprop', 'mudafy'].map(p => (
-                  <label key={p} className="flex items-center justify-between py-0.5 cursor-pointer hover:text-blue-600">
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        checked={filters.portals.includes(p)}
-                        onChange={() => {
-                          const curr = filters.portals;
-                          setFilters(prev => ({ ...prev, portals: curr.includes(p) ? curr.filter(x => x !== p) : [...curr, p], page: 1 }));
-                        }}
-                      />
-                      <span className="capitalize">{p === 'mercadolibre' ? 'Mercado Libre' : p}</span>
-                    </div>
-                    <span className="text-gray-400">({stats?.by_portal?.[p] || 0})</span>
-                  </label>
-                ))}
+                {['mercadolibre', 'zonaprop', 'argenprop', 'remax', 'cabaprop', 'properati', 'mudafy'].map(p => {
+                  const pName = {
+                    mercadolibre: 'Mercado Libre',
+                    zonaprop: 'Zonaprop',
+                    argenprop: 'Argenprop',
+                    remax: 'RE/MAX',
+                    cabaprop: 'CabaProp',
+                    properati: 'Properati',
+                    mudafy: 'Mudafy'
+                  }[p] || p;
+                  return (
+                    <label key={p} className="flex items-center justify-between py-0.5 cursor-pointer hover:text-blue-600">
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={filters.portals.includes(p)}
+                          onChange={() => {
+                            const curr = filters.portals;
+                            setFilters(prev => ({ ...prev, portals: curr.includes(p) ? curr.filter(x => x !== p) : [...curr, p], page: 1 }));
+                          }}
+                        />
+                        <span>{pName}</span>
+                      </div>
+                      <span className="text-gray-400">({stats?.by_portal?.[p] || 0})</span>
+                    </label>
+                  );
+                })}
               </div>
 
             </aside>
@@ -962,8 +973,20 @@
         mercadolibre: 'bg-amber-100 text-amber-900 border-amber-300',
         zonaprop: 'bg-fuchsia-100 text-fuchsia-900 border-fuchsia-300',
         argenprop: 'bg-blue-100 text-blue-900 border-blue-300',
-        mudafy: 'bg-emerald-100 text-emerald-900 border-emerald-300',
-        properati: 'bg-teal-100 text-teal-900 border-teal-300'
+        remax: 'bg-red-100 text-red-900 border-red-300',
+        cabaprop: 'bg-indigo-100 text-indigo-900 border-indigo-300',
+        properati: 'bg-teal-100 text-teal-900 border-teal-300',
+        mudafy: 'bg-emerald-100 text-emerald-900 border-emerald-300'
+      };
+
+      const portalDisplayNames = {
+        mercadolibre: 'Mercado Libre',
+        zonaprop: 'Zonaprop',
+        argenprop: 'Argenprop',
+        remax: 'RE/MAX',
+        cabaprop: 'CabaProp',
+        properati: 'Properati',
+        mudafy: 'Mudafy'
       };
 
       const defaultImg = 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80';
@@ -980,7 +1003,7 @@
             <img src={displayImg} alt={property.title} className="w-full h-full object-cover" />
             <div className="absolute top-2 left-2 flex flex-col gap-1">
               <span className={'text-[10px] font-bold px-2 py-0.5 rounded border ' + (portalBadges[property.portal] || 'bg-gray-100')}>
-                {property.portal === 'mercadolibre' ? 'Mercado Libre' : property.portal}
+                {portalDisplayNames[property.portal] || property.portal}
               </span>
               <span className="text-[10px] font-bold uppercase bg-black/70 text-white px-1.5 py-0.5 rounded">
                 {property.property_type}

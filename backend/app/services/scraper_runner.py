@@ -9,12 +9,16 @@ from backend.app.scrapers.argenprop_scraper import ArgenpropScraper
 from backend.app.scrapers.zonaprop_scraper import ZonapropScraper
 from backend.app.scrapers.properati_scraper import ProperatiScraper
 from backend.app.scrapers.mudafy_scraper import MudafyScraper
+from backend.app.scrapers.remax_scraper import RemaxScraper
+from backend.app.scrapers.cabaprop_scraper import CabaPropScraper
 from backend.app.services.deduplication_service import run_deduplication
 
 SCRAPERS = {
     "mercadolibre": MercadoLibreScraper(),
     "argenprop": ArgenpropScraper(),
     "zonaprop": ZonapropScraper(),
+    "remax": RemaxScraper(),
+    "cabaprop": CabaPropScraper(),
     "properati": ProperatiScraper(),
     "mudafy": MudafyScraper()
 }
