@@ -40,7 +40,8 @@ app.include_router(properties_router)
 app.include_router(scraper_router)
 app.include_router(export_router)
 
-@app.get("/api/health")
+@app.api_route("/api/health", methods=["GET", "HEAD"])
+@app.api_route("/health", methods=["GET", "HEAD"])
 def health_check():
     return {"status": "ok", "message": "alive"}
 
