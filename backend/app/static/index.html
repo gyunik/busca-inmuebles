@@ -787,6 +787,7 @@
       const mapContainerRef = React.useRef(null);
       const mapInstanceRef = React.useRef(null);
       const markersLayerRef = React.useRef(null);
+      const markersByIdRef = React.useRef({});
 
       React.useEffect(() => {
         if (!mapContainerRef.current) return;
@@ -824,6 +825,7 @@
         const map = mapInstanceRef.current;
         const markersGroup = markersLayerRef.current;
         markersGroup.clearLayers();
+        markersByIdRef.current = {};
 
         const bounds = [];
 
@@ -854,6 +856,7 @@
           });
 
           const marker = L.marker([lat, lng], { icon: icon });
+          markersByIdRef.current[p.id] = { marker, lat, lng };
 
           const portalColor = {
             mercadolibre: 'bg-amber-100 text-amber-900 border-amber-300',
@@ -906,7 +909,13 @@
           markersGroup.addLayer(marker);
         });
 
-        if (bounds.length > 0) {
+        if (selectedId && markersByIdRef.current[selectedId]) {
+          const target = markersByIdRef.current[selectedId];
+          map.flyTo([target.lat, target.lng], 16, { duration: 0.8 });
+          setTimeout(() => {
+            target.marker.openPopup();
+          }, 850);
+        } else if (bounds.length > 0) {
           if (activeNeighborhoods && activeNeighborhoods.length === 1 && NEIGHBORHOOD_COORDS[activeNeighborhoods[0]]) {
             map.setView(NEIGHBORHOOD_COORDS[activeNeighborhoods[0]], 15);
           } else {
