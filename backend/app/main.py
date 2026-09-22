@@ -40,6 +40,10 @@ app.include_router(properties_router)
 app.include_router(scraper_router)
 app.include_router(export_router)
 
+@app.get("/api/health")
+def health_check():
+    return {"status": "ok", "message": "alive"}
+
 from pathlib import Path
 from fastapi.staticfiles import StaticFiles
 
