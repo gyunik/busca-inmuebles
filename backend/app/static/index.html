@@ -346,8 +346,9 @@
                 <strong>{stats?.total_properties || 0}</strong> inmuebles en base de datos · 
                 <span className="text-amber-700 font-semibold ml-1">Mercado Libre ({stats?.by_portal?.mercadolibre || 0})</span>, 
                 <span className="text-fuchsia-700 font-semibold ml-1">Zonaprop ({stats?.by_portal?.zonaprop || 0})</span>, 
+                <span className="text-red-700 font-semibold ml-1">RE/MAX ({stats?.by_portal?.remax || 0})</span>, 
                 <span className="text-blue-700 font-semibold ml-1">Argenprop ({stats?.by_portal?.argenprop || 0})</span>, 
-                <span className="text-teal-700 font-semibold ml-1">Properati ({stats?.by_portal?.properati || 0})</span>
+                <span className="text-emerald-700 font-semibold ml-1">Mudafy ({stats?.by_portal?.mudafy || 0})</span>
               </div>
             </div>
           </header>
@@ -506,15 +507,15 @@
 
               <div>
                 <h4 className="font-bold text-gray-700 uppercase mb-2">Portales</h4>
-                {['mercadolibre', 'zonaprop', 'argenprop', 'remax', 'cabaprop', 'properati', 'mudafy'].map(p => {
+                {['zonaprop', 'mercadolibre', 'remax', 'argenprop', 'mudafy'].map(p => {
                   const pName = {
-                    mercadolibre: 'Mercado Libre',
                     zonaprop: 'Zonaprop',
-                    argenprop: 'Argenprop',
+                    mercadolibre: 'Mercado Libre',
                     remax: 'RE/MAX',
+                    argenprop: 'Argenprop',
+                    mudafy: 'Mudafy',
                     cabaprop: 'CabaProp',
-                    properati: 'Properati',
-                    mudafy: 'Mudafy'
+                    properati: 'Properati'
                   }[p] || p;
                   return (
                     <label key={p} className="flex items-center justify-between py-0.5 cursor-pointer hover:text-blue-600">
