@@ -1,32 +1,145 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Busca Inmuebles | Agregador CABA & GBA</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Busca Inmuebles AR | Inteligencia Inmobiliaria CABA & GBA</title>
+  
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  
+  <!-- React & Axios -->
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  
+  <!-- Leaflet & MarkerCluster -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  
+  <!-- Tailwind CSS & Stitch Theme Config -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "secondary-container": "#fea619",
+            "on-error-container": "#93000a",
+            "on-tertiary-fixed": "#00174b",
+            "on-primary-container": "#7c839b",
+            "on-background": "#0b1c30",
+            "surface": "#f8f9ff",
+            "primary": "#000000",
+            "tertiary-fixed-dim": "#b4c5ff",
+            "tertiary-container": "#00174b",
+            "surface-container-high": "#dce9ff",
+            "on-error": "#ffffff",
+            "surface-bright": "#f8f9ff",
+            "secondary-fixed-dim": "#ffb95f",
+            "surface-container": "#e5eeff",
+            "inverse-surface": "#213145",
+            "outline": "#76777d",
+            "on-surface-variant": "#45464d",
+            "primary-container": "#131b2e",
+            "on-primary": "#ffffff",
+            "inverse-primary": "#bec6e0",
+            "primary-fixed-dim": "#bec6e0",
+            "outline-variant": "#c6c6cd",
+            "surface-container-lowest": "#ffffff",
+            "on-surface": "#0b1c30",
+            "on-primary-fixed": "#131b2e",
+            "background": "#f8f9ff",
+            "surface-dim": "#cbdbf5",
+            "secondary": "#855300",
+            "surface-tint": "#565e74",
+            "tertiary-fixed": "#dbe1ff",
+            "error-container": "#ffdad6",
+            "error": "#ba1a1a",
+            "on-primary-fixed-variant": "#3f465c",
+            "surface-container-low": "#eff4ff",
+            "on-tertiary": "#ffffff",
+            "primary-fixed": "#dae2fd",
+            "on-tertiary-container": "#497cff",
+            "on-secondary": "#ffffff",
+            "on-secondary-fixed": "#2a1700",
+            "on-secondary-container": "#684000",
+            "on-tertiary-fixed-variant": "#003ea8",
+            "surface-variant": "#d3e4fe",
+            "tertiary": "#000000",
+            "secondary-fixed": "#ffddb8",
+            "on-secondary-fixed-variant": "#653e00",
+            "surface-container-highest": "#d3e4fe",
+            "inverse-on-surface": "#eaf1ff"
+          },
+          borderRadius: {
+            DEFAULT: "0.25rem",
+            lg: "0.5rem",
+            xl: "0.75rem",
+            full: "9999px"
+          },
+          spacing: {
+            "gutter-mobile": "0.75rem",
+            "margin-mobile": "1rem",
+            "space-lg": "1.5rem",
+            "gutter": "1.25rem",
+            "space-xl": "2.5rem",
+            "space-md": "1rem",
+            "margin": "2rem",
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem"
+          },
+          fontFamily: {
+            "metric-mono": ["Plus Jakarta Sans", "monospace"],
+            "display-hero": ["Plus Jakarta Sans", "sans-serif"],
+            "label-sm": ["Plus Jakarta Sans", "sans-serif"],
+            "body-md": ["Plus Jakarta Sans", "sans-serif"],
+            "body-lg": ["Plus Jakarta Sans", "sans-serif"],
+            "label-md": ["Plus Jakarta Sans", "sans-serif"],
+            "price-xl": ["Plus Jakarta Sans", "sans-serif"],
+            "body-sm": ["Plus Jakarta Sans", "sans-serif"],
+            "headline-lg-mobile": ["Plus Jakarta Sans", "sans-serif"],
+            "headline-lg": ["Plus Jakarta Sans", "sans-serif"],
+            "headline-md": ["Plus Jakarta Sans", "sans-serif"]
+          },
+          fontSize: {
+            "metric-mono": ["12px", { lineHeight: "16px", fontWeight: "700" }],
+            "display-hero": ["36px", { lineHeight: "44px", letterSpacing: "-0.03em", fontWeight: "800" }],
+            "label-sm": ["11px", { lineHeight: "16px", letterSpacing: "0.03em", fontWeight: "700" }],
+            "body-md": ["14px", { lineHeight: "20px", fontWeight: "400" }],
+            "body-lg": ["16px", { lineHeight: "24px", fontWeight: "500" }],
+            "label-md": ["13px", { lineHeight: "18px", letterSpacing: "0.01em", fontWeight: "600" }],
+            "price-xl": ["24px", { lineHeight: "30px", letterSpacing: "-0.02em", fontWeight: "800" }],
+            "body-sm": ["12px", { lineHeight: "18px", fontWeight: "400" }],
+            "headline-lg-mobile": ["22px", { lineHeight: "28px", letterSpacing: "-0.01em", fontWeight: "700" }],
+            "headline-lg": ["26px", { lineHeight: "34px", letterSpacing: "-0.02em", fontWeight: "700" }],
+            "headline-md": ["20px", { lineHeight: "28px", letterSpacing: "-0.01em", fontWeight: "700" }]
+          }
+        }
+      }
+    };
+  </script>
+  
   <style>
-    body { background-color: #ededed; color: #333333; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #f1f1f1; }
-    ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 3px; }
+    @layer base {
+      html, body { margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    }
     
-    /* Pastillas de precio Zonaprop style */
+    /* Zonaprop style price badges on map */
     .price-pill {
       background-color: #ff5a00;
       color: #ffffff;
       font-weight: 800;
       font-size: 11px;
-      padding: 3px 7px;
+      padding: 3px 8px;
       border-radius: 12px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.35);
       border: 1.5px solid #ffffff;
@@ -46,7 +159,8 @@
       background-color: #e11d48 !important;
     }
     .selected-pill {
-      background-color: #2563eb !important;
+      background-color: #000000 !important;
+      border-color: #fea619 !important;
       transform: scale(1.18);
     }
     .custom-price-marker {
@@ -55,9 +169,9 @@
     }
     .leaflet-popup-content-wrapper {
       padding: 0;
-      border-radius: 12px;
+      border-radius: 14px;
       overflow: hidden;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.2);
     }
     .leaflet-popup-content {
       margin: 0;
@@ -65,10 +179,12 @@
     }
   </style>
 </head>
-<body>
+
+<body class="bg-background font-body-md text-on-surface antialiased">
   <div id="root"></div>
+
   <script type="text/babel">
-    const { useState, useEffect, useCallback, useRef } = React;
+    const { useState, useEffect, useCallback, useRef, useMemo } = React;
     const API_BASE = '/api';
 
     const NEIGHBORHOOD_COORDS = {
@@ -98,78 +214,60 @@
       "Palermo": [-34.5889, -58.4306],
       "Parque Avellaneda": [-34.6500, -58.4750],
       "Parque Chacabuco": [-34.6333, -58.4417],
-      "Parque Chas": [-34.5850, -58.4800],
-      "Parque Patricios": [-34.6389, -58.4056],
-      "Puerto Madero": [-34.6100, -58.3600],
-      "Recoleta": [-34.5889, -58.3944],
-      "Retiro": [-34.5928, -58.3756],
-      "Saavedra": [-34.5500, -58.4900],
-      "San Cristóbal": [-34.6222, -58.4000],
-      "San Nicolás": [-34.6039, -58.3817],
-      "San Telmo": [-34.6211, -58.3731],
-      "Versalles": [-34.6250, -58.5250],
-      "Villa Crespo": [-34.5994, -58.4439],
-      "Villa del Parque": [-34.6056, -58.4917],
-      "Villa Devoto": [-34.6000, -58.5125],
-      "Villa General Mitre": [-34.6111, -58.4722],
+      "Parque Chas": [-34.5855, -58.4800],
+      "Parque Patricios": [-34.6375, -58.4064],
+      "Puerto Madero": [-34.6111, -58.3639],
+      "Recoleta": [-34.5889, -58.3917],
+      "Retiro": [-34.5917, -58.3750],
+      "Saavedra": [-34.5500, -58.4833],
+      "San Cristóbal": [-34.6250, -58.4000],
+      "San Nicolás": [-34.6050, -58.3800],
+      "San Telmo": [-34.6214, -58.3731],
+      "Vélez Sársfield": [-34.6333, -58.5000],
+      "Versalles": [-34.6300, -58.5250],
+      "Villa Crespo": [-34.5989, -58.4417],
+      "Villa del Parque": [-34.6050, -58.4950],
+      "Villa Devoto": [-34.6000, -58.5167],
+      "Villa General Mitre": [-34.6100, -58.4750],
       "Villa Lugano": [-34.6750, -58.4750],
-      "Villa Luro": [-34.6389, -58.5028],
-      "Villa Ortúzar": [-34.5806, -58.4722],
-      "Villa Pueyrredón": [-34.5778, -58.5056],
-      "Villa Real": [-34.6167, -58.5250],
-      "Villa Riachuelo": [-34.6861, -58.4611],
-      "Villa Santa Rita": [-34.6167, -58.4833],
-      "Villa Soldati": [-34.6667, -58.4417],
-      "Villa Urquiza": [-34.5722, -58.4889],
-      "Vélez Sársfield": [-34.6300, -58.4800],
-      // GBA
-      "Vicente López": [-34.5292, -58.4722],
-      "Olivos": [-34.5111, -58.4889],
-      "San Isidro": [-34.4722, -58.5278],
-      "Martínez": [-34.4944, -58.5111],
-      "Tigre": [-34.4250, -58.5792],
-      "San Fernando": [-34.4444, -58.5556],
-      "San Martín": [-34.5750, -58.5361],
-      "Tres de Febrero": [-34.6000, -58.5667],
-      "Morón": [-34.6500, -58.6167],
-      "Ramos Mejía": [-34.6472, -58.5639],
-      "Castelar": [-34.6583, -58.6417],
-      "Ituzaingó": [-34.6583, -58.6667],
-      "Avellaneda": [-34.6611, -58.3667],
-      "Lanús": [-34.7000, -58.3917],
-      "Quilmes": [-34.7167, -58.2583],
-      "Lomas de Zamora": [-34.7611, -58.4000],
-      "Banfield": [-34.7417, -58.3917],
-      "Temperley": [-34.7722, -58.3944]
+      "Villa Luro": [-34.6400, -58.5000],
+      "Villa Ortúzar": [-34.5800, -58.4700],
+      "Villa Real": [-34.6200, -58.5250],
+      "Villa Riachuelo": [-34.6900, -58.4600],
+      "Villa Santa Rita": [-34.6150, -58.4850],
+      "Villa Soldati": [-34.6650, -58.4450],
+      "Villa Urquiza": [-34.5724, -58.4900],
+      "Villa Pueyrredón": [-34.5800, -58.5050],
+      // GBA Norte
+      "Vicente López": [-34.5300, -58.4800],
+      "Olivos": [-34.5100, -58.4900],
+      "Florida": [-34.5350, -58.5000],
+      "La Lucila": [-34.4980, -58.4950],
+      "Martínez": [-34.4950, -58.5100],
+      "Acassuso": [-34.4750, -58.5050],
+      "San Isidro": [-34.4700, -58.5200],
+      "Béccar": [-34.4550, -58.5350],
+      "Tigre": [-34.4260, -58.5796],
+      "Nordelta": [-34.4150, -58.6450]
     };
-
-    function formatPricePill(price) {
-      if (!price) return 'Consultar';
-      if (price >= 1000000) {
-        const val = (price / 1000000).toFixed(1).replace('.0', '');
-        return `USD ${val}M`;
-      }
-      if (price >= 1000) {
-        const val = Math.round(price / 1000);
-        return `USD ${val}K`;
-      }
-      return `USD ${price}`;
-    }
 
     function App() {
       const [properties, setProperties] = useState([]);
+      const [stats, setStats] = useState(null);
+      const [catalog, setCatalog] = useState({ CABA: [], 'GBA Norte': [], 'GBA Sur': [], 'GBA Oeste': [] });
+      const [loading, setLoading] = useState(true);
       const [total, setTotal] = useState(0);
       const [totalPages, setTotalPages] = useState(1);
-      const [loading, setLoading] = useState(true);
-      const [catalog, setCatalog] = useState({});
-      const [stats, setStats] = useState(null);
-      const [isScrapeModalOpen, setIsScrapeModalOpen] = useState(false);
-      const [isExporting, setIsExporting] = useState(false);
-      const [viewMode, setViewMode] = useState('split'); // 'list', 'split', 'map'
-      const [selectedPropertyId, setSelectedPropertyId] = useState(null);
+      const [selectedId, setSelectedId] = useState(null);
+      const [viewMode, setViewMode] = useState('split'); // 'list' | 'split' | 'map'
+      const [activeTab, setActiveTab] = useState('explorador');
+      const [isScraping, setIsScraping] = useState(false);
+      const [scrapeMessage, setScrapeMessage] = useState('');
 
       const [filters, setFilters] = useState({
+        search: '',
         property_types: [],
+        operation_type: 'venta',
         neighborhoods: [],
         zones: [],
         portals: [],
@@ -177,665 +275,1028 @@
         max_price: undefined,
         min_area: undefined,
         max_area: undefined,
+        min_rooms: undefined,
         min_bedrooms: undefined,
-        max_bedrooms: undefined,
         min_bathrooms: undefined,
-        days_ago: undefined,
+        has_garage: undefined,
         date_filter: '',
-        search_query: '',
         only_favorites: false,
-        group_duplicates: false,
+        group_duplicates: true,
         sort_by: 'newest',
         page: 1,
-        page_size: 150
+        page_size: 25
       });
 
-      const [searchInputValue, setSearchInputValue] = useState('');
-
-      useEffect(() => {
-        axios.get(API_BASE + '/properties/catalog/locations').then(res => setCatalog(res.data)).catch(console.error);
-      }, []);
-
-      const fetchStats = useCallback(async () => {
+      // Load Catalog & Stats
+      const fetchCatalogAndStats = useCallback(async () => {
         try {
-          const res = await axios.get(API_BASE + '/properties/stats/summary');
-          setStats(res.data);
+          const [catRes, statsRes] = await Promise.all([
+            axios.get(`${API_BASE}/properties/locations-catalog`),
+            axios.get(`${API_BASE}/properties/stats`)
+          ]);
+          setCatalog(catRes.data);
+          setStats(statsRes.data);
         } catch (err) {
-          console.error(err);
+          console.error("Error fetching catalog/stats:", err);
         }
       }, []);
 
-      useEffect(() => { fetchStats(); }, [fetchStats]);
-
+      // Load Properties
       const fetchProperties = useCallback(async () => {
         setLoading(true);
         try {
-          const params = new URLSearchParams();
-          filters.property_types.forEach(t => params.append('property_types', t));
-          filters.neighborhoods.forEach(n => params.append('neighborhoods', n));
-          filters.zones.forEach(z => params.append('zones', z));
-          filters.portals.forEach(p => params.append('portals', p));
-          if (filters.min_price !== undefined) params.append('min_price', filters.min_price);
-          if (filters.max_price !== undefined) params.append('max_price', filters.max_price);
-          if (filters.min_area !== undefined) params.append('min_area', filters.min_area);
-          if (filters.max_area !== undefined) params.append('max_area', filters.max_area);
-          if (filters.min_bedrooms !== undefined) params.append('min_bedrooms', filters.min_bedrooms);
-          if (filters.min_bathrooms !== undefined) params.append('min_bathrooms', filters.min_bathrooms);
-          if (filters.days_ago !== undefined) params.append('days_ago', filters.days_ago);
-          if (filters.date_filter) params.append('date_filter', filters.date_filter);
-          if (filters.search_query) params.append('search_query', filters.search_query);
-          if (filters.only_favorites) params.append('only_favorites', 'true');
-          if (filters.group_duplicates) params.append('group_duplicates', 'true');
-          params.append('sort_by', filters.sort_by);
-          params.append('page', filters.page);
-          params.append('page_size', filters.page_size);
+          const params = {
+            search: filters.search || undefined,
+            property_type: filters.property_types.length === 1 ? filters.property_types[0] : undefined,
+            operation_type: filters.operation_type || undefined,
+            neighborhood: filters.neighborhoods.length === 1 ? filters.neighborhoods[0] : undefined,
+            zone: filters.zones.length === 1 ? filters.zones[0] : undefined,
+            portal: filters.portals.length === 1 ? filters.portals[0] : undefined,
+            min_price: filters.min_price || undefined,
+            max_price: filters.max_price || undefined,
+            min_area: filters.min_area || undefined,
+            max_area: filters.max_area || undefined,
+            min_rooms: filters.min_rooms || undefined,
+            min_bedrooms: filters.min_bedrooms || undefined,
+            min_bathrooms: filters.min_bathrooms || undefined,
+            has_garage: filters.has_garage || undefined,
+            date_filter: filters.date_filter || undefined,
+            only_favorites: filters.only_favorites || undefined,
+            group_duplicates: filters.group_duplicates,
+            sort_by: filters.sort_by,
+            page: filters.page,
+            page_size: filters.page_size
+          };
 
-          const res = await axios.get(API_BASE + '/properties?' + params.toString());
-          setProperties(res.data.items);
-          setTotal(res.data.total);
-          setTotalPages(res.data.total_pages);
+          const res = await axios.get(`${API_BASE}/properties`, { params });
+          let items = res.data.items || [];
+          
+          // Client-side multi-select filter support
+          if (filters.property_types.length > 1) {
+            items = items.filter(p => filters.property_types.includes(p.property_type?.toLowerCase()));
+          }
+          if (filters.neighborhoods.length > 1) {
+            items = items.filter(p => filters.neighborhoods.includes(p.neighborhood));
+          }
+          if (filters.portals.length > 1) {
+            items = items.filter(p => filters.portals.includes(p.portal));
+          }
+
+          setProperties(items);
+          setTotal(res.data.total || 0);
+          setTotalPages(res.data.total_pages || 1);
         } catch (err) {
-          console.error(err);
+          console.error("Error fetching properties:", err);
         } finally {
           setLoading(false);
         }
       }, [filters]);
 
-      useEffect(() => { fetchProperties(); }, [fetchProperties]);
+      useEffect(() => {
+        fetchCatalogAndStats();
+      }, [fetchCatalogAndStats]);
 
-      const handleSearchSubmit = () => {
-        setFilters(prev => ({ ...prev, search_query: searchInputValue, page: 1 }));
-      };
+      useEffect(() => {
+        fetchProperties();
+      }, [fetchProperties]);
 
-      const handleToggleFavorite = async (id) => {
+      // Actions
+      const toggleFavorite = async (id) => {
         try {
-          const res = await axios.post(API_BASE + '/properties/' + id + '/favorite');
+          const res = await axios.post(`${API_BASE}/properties/${id}/favorite`);
           setProperties(prev => prev.map(p => p.id === id ? { ...p, is_favorite: res.data.is_favorite } : p));
-          fetchStats();
-        } catch (err) { console.error(err); }
-      };
-
-      const handleToggleDiscard = async (id) => {
-        try {
-          await axios.post(API_BASE + '/properties/' + id + '/discard');
-          setProperties(prev => prev.filter(p => p.id !== id));
-          setTotal(prev => Math.max(prev - 1, 0));
-          fetchStats();
-        } catch (err) { console.error(err); }
-      };
-
-      const handleSaveNotes = async (id, notes) => {
-        try {
-          const res = await axios.post(API_BASE + '/properties/' + id + '/notes', { notes });
-          setProperties(prev => prev.map(p => p.id === id ? { ...p, user_notes: res.data.user_notes } : p));
-        } catch (err) { console.error(err); }
-      };
-
-      const handleExportExcel = async () => {
-        setIsExporting(true);
-        try {
-          const params = new URLSearchParams();
-          filters.property_types.forEach(t => params.append('property_types', t));
-          filters.neighborhoods.forEach(n => params.append('neighborhoods', n));
-          filters.portals.forEach(p => params.append('portals', p));
-          if (filters.min_price !== undefined) params.append('min_price', filters.min_price);
-          if (filters.max_price !== undefined) params.append('max_price', filters.max_price);
-          if (filters.date_filter) params.append('date_filter', filters.date_filter);
-          if (filters.search_query) params.append('search_query', filters.search_query);
-
-          const response = await axios.get(API_BASE + '/export/excel?' + params.toString(), { responseType: 'blob' });
-          const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-          const downloadUrl = window.URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.href = downloadUrl;
-          link.download = 'inmuebles_exportados_' + new Date().toISOString().slice(0, 10) + '.xlsx';
-          document.body.appendChild(link);
-          link.click();
-          link.remove();
+          fetchCatalogAndStats();
         } catch (err) {
-          alert('Error al exportar archivo Excel');
-        } finally {
-          setIsExporting(false);
+          console.error("Error toggling favorite:", err);
         }
       };
 
+      const toggleDiscard = async (id) => {
+        try {
+          await axios.post(`${API_BASE}/properties/${id}/discard`);
+          setProperties(prev => prev.filter(p => p.id !== id));
+          fetchCatalogAndStats();
+        } catch (err) {
+          console.error("Error discarding property:", err);
+        }
+      };
+
+      const saveNotes = async (id, notes) => {
+        try {
+          await axios.put(`${API_BASE}/properties/${id}/notes`, { notes });
+          setProperties(prev => prev.map(p => p.id === id ? { ...p, user_notes: notes } : p));
+        } catch (err) {
+          console.error("Error saving notes:", err);
+        }
+      };
+
+      const handleTriggerScraper = async () => {
+        setIsScraping(true);
+        setScrapeMessage('Iniciando escaneo de portales en segundo plano...');
+        try {
+          await axios.post(`${API_BASE}/scraper/jobs`, { portal: 'all', property_type: 'ph', zone: 'capital-federal' });
+          setScrapeMessage('Escaneo iniciado con éxito. Los resultados se actualizarán automáticamente.');
+          setTimeout(() => {
+            fetchCatalogAndStats();
+            fetchProperties();
+            setIsScraping(false);
+            setScrapeMessage('');
+          }, 4000);
+        } catch (err) {
+          setScrapeMessage('Error al iniciar escaneo.');
+          setIsScraping(false);
+        }
+      };
+
+      const handleExport = () => {
+        window.open(`${API_BASE}/export/excel`, '_blank');
+      };
+
       return (
-        <div className="min-h-screen bg-[#ededed] flex flex-col font-sans">
-          <header className="bg-[#FFE600] border-b border-yellow-300 shadow-sm sticky top-0 z-40">
-            <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
-              <div className="flex items-center gap-2 cursor-pointer" onClick={() => window.location.reload()}>
-                <div className="bg-[#2D3277] text-white p-2 rounded-lg font-black text-xl flex items-center gap-1 shadow-sm">
-                  <span>🏢 Busca<span className="text-yellow-400">Inmuebles</span></span>
+        <div className="min-h-screen bg-background text-on-surface flex flex-col font-body-md">
+          {/* Top Fixed Header */}
+          <header class="fixed top-0 left-0 right-0 z-50 bg-surface-container-lowest/95 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+            <div class="h-28 w-full flex flex-col">
+              {/* Tier 1 Header */}
+              <div class="h-16 px-margin flex items-center justify-between gap-gutter">
+                <div class="flex items-center gap-space-lg shrink-0">
+                  <div class="flex items-center gap-space-sm cursor-pointer" onClick={() => setFilters({ property_types: [], neighborhoods: [], zones: [], portals: [], date_filter: '', sort_by: 'newest', page: 1, page_size: 25 })}>
+                    <div class="w-9 h-9 rounded-lg bg-primary flex items-center justify-center">
+                      <span class="material-symbols-outlined text-secondary-container text-[20px]">apartment</span>
+                    </div>
+                    <div class="flex flex-col leading-none">
+                      <div class="flex items-center gap-1">
+                        <span class="font-headline-md text-headline-md text-on-surface tracking-tight font-extrabold">Busca<span class="text-secondary">Inmuebles</span></span>
+                        <span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed">AR</span>
+                      </div>
+                      <span class="font-label-sm text-label-sm text-on-surface-variant">Inteligencia Inmobiliaria</span>
+                    </div>
+                  </div>
+
+                  <div class="h-6 w-[1px] bg-surface-variant hidden lg:block"></div>
+
+                  <button 
+                    onClick={() => setFilters(prev => ({ ...prev, zones: prev.zones.length > 0 ? [] : ['CABA'], page: 1 }))}
+                    class="hidden sm:flex items-center gap-space-xs bg-surface-container-low hover:bg-surface-container px-3 py-1.5 rounded-full text-on-surface transition-colors"
+                  >
+                    <span class="material-symbols-outlined text-secondary text-[16px]">near_me</span>
+                    <span class="font-label-md text-label-md">{filters.zones.length > 0 ? filters.zones.join(', ') : 'CABA & GBA'}</span>
+                    <span class="material-symbols-outlined text-on-surface-variant text-[16px]">expand_more</span>
+                  </button>
                 </div>
-                <span className="hidden md:inline-block text-xs font-semibold bg-blue-100 text-blue-900 px-2 py-0.5 rounded-full uppercase">
-                  CABA & GBA
-                </span>
+
+                {/* Central Search Bar */}
+                <div class="flex-1 max-w-2xl px-space-md">
+                  <div class="relative flex items-center w-full">
+                    <span class="material-symbols-outlined absolute left-3 text-on-surface-variant text-[18px]">search</span>
+                    <input 
+                      class="w-full pl-9 pr-24 py-2 bg-surface rounded-full text-on-surface font-body-sm text-body-sm placeholder:text-on-surface-variant focus:outline-none focus:ring-2 focus:ring-secondary-container border border-surface-variant/40"
+                      placeholder="Buscar por barrio, calle, código postal o ID... (ej. Palermo, Villa Urquiza, USD 120.000)"
+                      type="text"
+                      value={filters.search}
+                      onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value, page: 1 }))}
+                    />
+                    <div class="absolute right-1.5 flex items-center gap-1">
+                      <span class="hidden md:inline-flex px-1.5 py-0.5 rounded bg-surface-container-high font-metric-mono text-metric-mono text-on-surface-variant">⌘K</span>
+                      <button class="px-3 py-1 rounded-full bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md transition-colors">
+                        Buscar
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Actions & Profile */}
+                <div class="flex items-center gap-space-sm shrink-0">
+                  <button 
+                    onClick={handleTriggerScraper}
+                    disabled={isScraping}
+                    class="hidden xl:flex items-center gap-space-xs px-3 py-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface transition-colors"
+                    title="Ejecutar escaneo de portales en segundo plano"
+                  >
+                    <span class={`material-symbols-outlined text-secondary text-[18px] ${isScraping ? 'animate-spin' : ''}`}>sync</span>
+                    <span class="font-label-md text-label-md">{isScraping ? 'Escaneando...' : 'Escanear'}</span>
+                    <span class="w-2 h-2 rounded-full bg-secondary-container"></span>
+                  </button>
+
+                  <button 
+                    onClick={handleExport}
+                    class="hidden md:flex items-center gap-space-xs px-3 py-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface transition-colors"
+                    title="Exportar base de datos a archivo Excel"
+                  >
+                    <span class="material-symbols-outlined text-secondary text-[18px]">table_view</span>
+                    <span class="font-label-md text-label-md">Exportar</span>
+                  </button>
+
+                  <button 
+                    onClick={() => setFilters(prev => ({ ...prev, only_favorites: !prev.only_favorites, page: 1 }))}
+                    class={`flex items-center gap-space-xs px-3 py-1.5 rounded-lg transition-colors ${filters.only_favorites ? 'bg-rose-50 text-rose-700 border border-rose-200' : 'bg-surface-container-low hover:bg-surface-container text-on-surface'}`}
+                    title="Filtrar solo favoritos"
+                  >
+                    <span class="material-symbols-outlined text-secondary text-[18px]">favorite</span>
+                    <span class="w-5 h-5 rounded-full bg-primary text-on-primary font-label-sm text-label-sm flex items-center justify-center">
+                      {stats?.total_favorites || 0}
+                    </span>
+                  </button>
+
+                  <div class="h-6 w-[1px] bg-surface-variant"></div>
+                  <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center cursor-pointer shadow-xs">
+                    <span class="material-symbols-outlined text-on-primary text-[18px]">person</span>
+                  </div>
+                </div>
               </div>
 
-              <div className="flex-1 max-w-2xl flex shadow-sm rounded bg-white border focus-within:ring-2 focus-within:ring-blue-500 overflow-hidden">
-                <input
-                  type="text"
-                  value={searchInputValue}
-                  onChange={(e) => setSearchInputValue(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSearchSubmit()}
-                  placeholder="Buscar por barrio, calle, inmobiliaria (ej. Palermo 3 amb, Ramos Mejía)..."
-                  className="w-full px-4 py-2 text-sm text-gray-800 focus:outline-none"
-                />
-                <button onClick={handleSearchSubmit} className="px-4 bg-white hover:bg-gray-50 text-gray-600 border-l font-bold">
-                  🔍
-                </button>
-              </div>
+              {/* Tier 2 Header (Stats & Tabs) */}
+              <div class="h-12 px-margin bg-surface-container-low flex items-center justify-between gap-gutter overflow-x-auto border-t border-surface-variant/30">
+                <div class="flex items-center gap-space-sm shrink-0">
+                  <div class="flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-secondary text-[16px]">database</span>
+                    <span class="font-metric-mono text-metric-mono text-on-surface">{stats?.total_properties?.toLocaleString() || '6.070'}</span>
+                    <span class="font-body-sm text-body-sm text-on-surface-variant">inmuebles auditados</span>
+                  </div>
+                  <span class="text-on-surface-variant font-label-sm text-label-sm">•</span>
+                  <div class="flex items-center gap-space-xs font-label-sm text-label-sm">
+                    <span class="px-2 py-0.5 rounded-full bg-surface-container-lowest text-on-surface flex items-center gap-1.5 shadow-2xs">
+                      <span class="w-1.5 h-1.5 rounded-full bg-[#ff5a00]"></span>Zonaprop <strong class="font-metric-mono text-metric-mono">{stats?.by_portal?.zonaprop?.toLocaleString() || '3.266'}</strong>
+                    </span>
+                    <span class="px-2 py-0.5 rounded-full bg-surface-container-lowest text-on-surface flex items-center gap-1.5 shadow-2xs">
+                      <span class="w-1.5 h-1.5 rounded-full bg-[#FFE600]"></span>Mercado Libre <strong class="font-metric-mono text-metric-mono">{stats?.by_portal?.mercadolibre?.toLocaleString() || '1.550'}</strong>
+                    </span>
+                    <span class="px-2 py-0.5 rounded-full bg-surface-container-lowest text-on-surface flex items-center gap-1.5 shadow-2xs">
+                      <span class="w-1.5 h-1.5 rounded-full bg-[#E11D48]"></span>RE/MAX <strong class="font-metric-mono text-metric-mono">{stats?.by_portal?.remax?.toLocaleString() || '979'}</strong>
+                    </span>
+                    <span class="px-2 py-0.5 rounded-full bg-surface-container-lowest text-on-surface flex items-center gap-1.5 shadow-2xs">
+                      <span class="w-1.5 h-1.5 rounded-full bg-[#2563eb]"></span>Argenprop <strong class="font-metric-mono text-metric-mono">{stats?.by_portal?.argenprop?.toLocaleString() || '180'}</strong>
+                    </span>
+                    <span class="px-2 py-0.5 rounded-full bg-surface-container-lowest text-on-surface flex items-center gap-1.5 shadow-2xs">
+                      <span class="w-1.5 h-1.5 rounded-full bg-[#10b981]"></span>Mudafy <strong class="font-metric-mono text-metric-mono">{stats?.by_portal?.mudafy?.toLocaleString() || '95'}</strong>
+                    </span>
+                  </div>
+                </div>
 
-              <div className="flex items-center gap-2">
-                <button onClick={() => setIsScrapeModalOpen(true)} className="bg-white hover:bg-gray-50 text-xs font-semibold px-3 py-2 rounded border shadow-sm">
-                  🔄 Escanear Portales
-                </button>
-                <button onClick={handleExportExcel} disabled={isExporting} className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3 py-2 rounded shadow-sm disabled:opacity-50">
-                  📊 {isExporting ? 'Exportando...' : 'Exportar Excel'}
-                </button>
-                <button
-                  onClick={() => setFilters(prev => ({ ...prev, only_favorites: !prev.only_favorites, page: 1 }))}
-                  className={'text-xs font-semibold px-3 py-2 rounded border shadow-sm ' + (filters.only_favorites ? 'bg-rose-500 text-white' : 'bg-white text-gray-800')}
-                >
-                  ⭐ Favoritos ({stats?.total_favorites || 0})
-                </button>
-              </div>
-            </div>
-            <div className="bg-white/80 border-t px-4 py-1 text-xs text-gray-600 flex justify-between">
-              <div>
-                <strong>{stats?.total_properties || 0}</strong> inmuebles en base de datos · 
-                <span className="text-amber-700 font-semibold ml-1">Mercado Libre ({stats?.by_portal?.mercadolibre || 0})</span>, 
-                <span className="text-fuchsia-700 font-semibold ml-1">Zonaprop ({stats?.by_portal?.zonaprop || 0})</span>, 
-                <span className="text-red-700 font-semibold ml-1">RE/MAX ({stats?.by_portal?.remax || 0})</span>, 
-                <span className="text-blue-700 font-semibold ml-1">Argenprop ({stats?.by_portal?.argenprop || 0})</span>, 
-                <span className="text-emerald-700 font-semibold ml-1">Mudafy ({stats?.by_portal?.mudafy || 0})</span>
+                <nav class="hidden lg:flex items-center gap-1 p-0.5 bg-surface-container rounded-lg">
+                  <button 
+                    onClick={() => setActiveTab('explorador')}
+                    class={`px-3 py-1 font-label-md text-label-md transition-colors ${activeTab === 'explorador' ? 'bg-surface-container-lowest text-on-surface font-bold rounded-md shadow-[0_1px_4px_rgba(0,0,0,0.04)]' : 'text-on-surface-variant hover:text-on-surface'}`}
+                  >
+                    Explorador
+                  </button>
+                  <button 
+                    onClick={() => setActiveTab('metricas')}
+                    class={`px-3 py-1 font-label-md text-label-md transition-colors ${activeTab === 'metricas' ? 'bg-surface-container-lowest text-on-surface font-bold rounded-md shadow-[0_1px_4px_rgba(0,0,0,0.04)]' : 'text-on-surface-variant hover:text-on-surface'}`}
+                  >
+                    Métricas de Zona
+                  </button>
+                  <button 
+                    onClick={() => setActiveTab('deduplicaciones')}
+                    class={`px-3 py-1 font-label-md text-label-md transition-colors ${activeTab === 'deduplicaciones' ? 'bg-surface-container-lowest text-on-surface font-bold rounded-md shadow-[0_1px_4px_rgba(0,0,0,0.04)]' : 'text-on-surface-variant hover:text-on-surface'}`}
+                  >
+                    Deduplicaciones
+                  </button>
+                </nav>
               </div>
             </div>
           </header>
 
-          <main className="max-w-7xl mx-auto px-4 py-6 w-full flex-1 flex flex-col lg:flex-row gap-6 items-start">
-            <aside className="w-full lg:w-72 bg-white rounded-lg border p-4 space-y-4 flex-shrink-0 text-xs">
-              <div className="flex justify-between items-center border-b pb-2">
-                <span className="font-bold text-sm text-gray-900">Filtros</span>
-                <button onClick={() => setFilters({ property_types: [], neighborhoods: [], zones: [], portals: [], date_filter: '', sort_by: 'newest', page: 1, page_size: 20 })} className="text-blue-600 hover:underline">
-                  Limpiar
-                </button>
-              </div>
+          {/* Scrape Toast Notification */}
+          {scrapeMessage && (
+            <div className="fixed bottom-4 right-4 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-2 text-xs font-semibold animate-bounce">
+              <span className="material-symbols-outlined text-secondary-container text-[18px]">info</span>
+              <span>{scrapeMessage}</span>
+            </div>
+          )}
 
-              <div className="bg-amber-50 border border-amber-200 rounded p-2.5">
-                <label className="flex items-start gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={filters.group_duplicates}
-                    onChange={(e) => setFilters(prev => ({ ...prev, group_duplicates: e.target.checked, page: 1 }))}
-                    className="mt-0.5 rounded text-blue-600"
-                  />
-                  <div>
-                    <span className="font-bold text-amber-950 block">Detección de Duplicados</span>
-                    <span className="text-amber-800 text-[11px] block">Agrupa avisos idénticos y resalta el mejor precio.</span>
-                  </div>
-                </label>
-              </div>
-
-              <div>
-                <h4 className="font-bold text-gray-700 uppercase mb-2">Inmueble</h4>
-                {['departamento', 'casa', 'ph'].map(t => (
-                  <label key={t} className="flex items-center justify-between py-0.5 cursor-pointer hover:text-blue-600">
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        checked={filters.property_types.includes(t)}
-                        onChange={() => {
-                          const curr = filters.property_types;
-                          setFilters(prev => ({ ...prev, property_types: curr.includes(t) ? curr.filter(x => x !== t) : [...curr, t], page: 1 }));
-                        }}
-                      />
-                      <span className="capitalize font-medium">{t === 'ph' ? 'PH' : t + 's'}</span>
+          {/* Layout Container */}
+          <div className="flex flex-1 w-full pt-28">
+            {/* Sidebar Filters */}
+            <aside class="w-80 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 overflow-y-auto p-space-md border-r border-surface-variant/30 flex-shrink-0">
+              <div class="space-y-space-md">
+                {/* Active Filters Card */}
+                <div class="p-space-sm rounded-xl bg-surface-container-low flex flex-col gap-space-xs">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-1.5">
+                      <span class="material-symbols-outlined text-secondary text-[18px]">filter_alt</span>
+                      <span class="font-label-md text-label-md text-on-surface font-bold">Filtros Activos</span>
                     </div>
-                    <span className="text-gray-400">({stats?.by_type?.[t] || 0})</span>
-                  </label>
-                ))}
-              </div>
-
-              <hr />
-
-              <NeighborhoodSelector
-                catalog={catalog}
-                selected={filters.neighborhoods}
-                onChange={(neighs) => setFilters(prev => ({ ...prev, neighborhoods: neighs, page: 1 }))}
-              />
-
-              <hr />
-
-              <div>
-                <h4 className="font-bold text-gray-700 uppercase mb-2">Precio (USD)</h4>
-                <div className="flex items-center gap-1">
-                  <input
-                    type="number"
-                    placeholder="Mín"
-                    defaultValue={filters.min_price || ''}
-                    onBlur={(e) => setFilters(prev => ({ ...prev, min_price: e.target.value ? parseFloat(e.target.value) : undefined, page: 1 }))}
-                    className="w-1/2 p-1 border rounded"
-                  />
-                  <span>-</span>
-                  <input
-                    type="number"
-                    placeholder="Máx"
-                    defaultValue={filters.max_price || ''}
-                    onBlur={(e) => setFilters(prev => ({ ...prev, max_price: e.target.value ? parseFloat(e.target.value) : undefined, page: 1 }))}
-                    className="w-1/2 p-1 border rounded"
-                  />
-                </div>
-              </div>
-
-              <hr />
-
-              <div>
-                <h4 className="font-bold text-gray-700 uppercase mb-2">Superficie Total (m²)</h4>
-                <div className="flex items-center gap-1">
-                  <input
-                    type="number"
-                    placeholder="Mín m²"
-                    defaultValue={filters.min_area || ''}
-                    onBlur={(e) => setFilters(prev => ({ ...prev, min_area: e.target.value ? parseFloat(e.target.value) : undefined, page: 1 }))}
-                    className="w-1/2 p-1 border rounded"
-                  />
-                  <span>-</span>
-                  <input
-                    type="number"
-                    placeholder="Máx m²"
-                    defaultValue={filters.max_area || ''}
-                    onBlur={(e) => setFilters(prev => ({ ...prev, max_area: e.target.value ? parseFloat(e.target.value) : undefined, page: 1 }))}
-                    className="w-1/2 p-1 border rounded"
-                  />
-                </div>
-              </div>
-
-              <hr />
-
-              <div>
-                <h4 className="font-bold text-gray-700 uppercase mb-2">Dormitorios</h4>
-                <div className="grid grid-cols-4 gap-1">
-                  {[1, 2, 3, 4].map(num => (
-                    <button
-                      key={num}
-                      type="button"
-                      onClick={() => setFilters(prev => ({ ...prev, min_bedrooms: prev.min_bedrooms === num ? undefined : num, page: 1 }))}
-                      className={'py-1 font-semibold rounded border ' + (filters.min_bedrooms === num ? 'bg-blue-600 text-white' : 'bg-white hover:bg-gray-50')}
+                    <button 
+                      onClick={() => setFilters({ search: '', property_types: [], operation_type: 'venta', neighborhoods: [], zones: [], portals: [], min_price: undefined, max_price: undefined, min_area: undefined, max_area: undefined, min_rooms: undefined, min_bedrooms: undefined, min_bathrooms: undefined, has_garage: undefined, date_filter: '', only_favorites: false, group_duplicates: true, sort_by: 'newest', page: 1, page_size: 25 })}
+                      class="font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface"
                     >
-                      {num === 4 ? '4+' : num}
+                      Limpiar
                     </button>
-                  ))}
+                  </div>
+                  <div class="flex flex-wrap gap-1">
+                    {filters.neighborhoods.map(n => (
+                      <span key={n} class="font-label-sm text-label-sm px-2 py-0.5 bg-surface-container-lowest rounded text-on-surface flex items-center gap-1 shadow-2xs">
+                        {n} <span onClick={() => setFilters(prev => ({ ...prev, neighborhoods: prev.neighborhoods.filter(x => x !== n), page: 1 }))} class="material-symbols-outlined text-[14px] cursor-pointer">close</span>
+                      </span>
+                    ))}
+                    {filters.property_types.map(t => (
+                      <span key={t} class="font-label-sm text-label-sm px-2 py-0.5 bg-surface-container-lowest rounded text-on-surface flex items-center gap-1 uppercase shadow-2xs">
+                        {t} <span onClick={() => setFilters(prev => ({ ...prev, property_types: prev.property_types.filter(x => x !== t), page: 1 }))} class="material-symbols-outlined text-[14px] cursor-pointer">close</span>
+                      </span>
+                    ))}
+                    {(filters.min_price || filters.max_price) && (
+                      <span class="font-label-sm text-label-sm px-2 py-0.5 bg-surface-container-lowest rounded text-on-surface flex items-center gap-1 shadow-2xs">
+                        USD {filters.min_price ? filters.min_price / 1000 + 'k' : '0'} - {filters.max_price ? filters.max_price / 1000 + 'k' : '∞'}
+                        <span onClick={() => setFilters(prev => ({ ...prev, min_price: undefined, max_price: undefined, page: 1 }))} class="material-symbols-outlined text-[14px] cursor-pointer">close</span>
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </div>
 
-              <hr />
+                {/* Deduplication Switch Box */}
+                <div class="p-space-sm rounded-xl bg-secondary-fixed/40 flex flex-col gap-space-xs border border-secondary-fixed">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-1.5">
+                      <span class="material-symbols-outlined text-secondary text-[18px]">join_inner</span>
+                      <span class="font-label-md text-label-md text-on-secondary-fixed font-bold">Deduplicar Inmuebles</span>
+                    </div>
+                    <input 
+                      type="checkbox"
+                      checked={filters.group_duplicates}
+                      onChange={(e) => setFilters(prev => ({ ...prev, group_duplicates: e.target.checked, page: 1 }))}
+                      class="w-4 h-4 rounded text-secondary cursor-pointer"
+                    />
+                  </div>
+                  <p class="font-body-sm text-body-sm text-on-secondary-fixed-variant leading-snug">
+                    Agrupa publicaciones idénticas detectadas en Zonaprop, Mercado Libre, RE/MAX y Argenprop.
+                  </p>
+                </div>
 
-              <div>
-                <h4 className="font-bold text-gray-700 uppercase mb-2">Baños</h4>
-                <div className="grid grid-cols-3 gap-1">
-                  {[1, 2, 3].map(num => (
-                    <button
-                      key={num}
-                      type="button"
-                      onClick={() => setFilters(prev => ({ ...prev, min_bathrooms: prev.min_bathrooms === num ? undefined : num, page: 1 }))}
-                      className={'py-1 font-semibold rounded border ' + (filters.min_bathrooms === num ? 'bg-blue-600 text-white' : 'bg-white hover:bg-gray-50')}
+                {/* Operation Type */}
+                <div class="space-y-space-xs">
+                  <span class="font-label-md text-label-md text-on-surface uppercase tracking-wide">Tipo de Operación</span>
+                  <div class="grid grid-cols-2 gap-1 p-1 bg-surface-container-low rounded-lg">
+                    <button 
+                      onClick={() => setFilters(prev => ({ ...prev, operation_type: 'venta', page: 1 }))}
+                      class={`py-1.5 text-center font-label-md text-label-md rounded transition-colors ${filters.operation_type === 'venta' ? 'bg-surface-container-lowest text-on-surface shadow-[0_1px_4px_rgba(0,0,0,0.04)] font-bold' : 'text-on-surface-variant hover:text-on-surface'}`}
                     >
-                      {num === 3 ? '3+' : num + '+'}
+                      Venta
                     </button>
-                  ))}
+                    <button 
+                      onClick={() => setFilters(prev => ({ ...prev, operation_type: 'alquiler', page: 1 }))}
+                      class={`py-1.5 text-center font-label-md text-label-md rounded transition-colors ${filters.operation_type === 'alquiler' ? 'bg-surface-container-lowest text-on-surface shadow-[0_1px_4px_rgba(0,0,0,0.04)] font-bold' : 'text-on-surface-variant hover:text-on-surface'}`}
+                    >
+                      Alquiler
+                    </button>
+                  </div>
+                </div>
+
+                {/* Property Type */}
+                <div class="space-y-space-xs">
+                  <span class="font-label-md text-label-md text-on-surface uppercase tracking-wide">Tipo de Propiedad</span>
+                  <div class="space-y-1 font-body-sm text-body-sm text-on-surface">
+                    {[
+                      { id: 'departamento', label: 'Departamento', count: stats?.by_type?.departamento || 0 },
+                      { id: 'casa', label: 'Casa', count: stats?.by_type?.casa || 0 },
+                      { id: 'ph', label: 'PH', count: stats?.by_type?.ph || 0 }
+                    ].map(t => (
+                      <label key={t.id} class="flex items-center justify-between p-1.5 rounded hover:bg-surface-container-low cursor-pointer">
+                        <span class="flex items-center gap-2">
+                          <input 
+                            type="checkbox"
+                            checked={filters.property_types.includes(t.id)}
+                            onChange={() => {
+                              const curr = filters.property_types;
+                              setFilters(prev => ({ ...prev, property_types: curr.includes(t.id) ? curr.filter(x => x !== t.id) : [...curr, t.id], page: 1 }));
+                            }}
+                            class="rounded text-primary cursor-pointer"
+                          /> 
+                          {t.label}
+                        </span>
+                        <span class="font-metric-mono text-metric-mono text-on-surface-variant">{t.count.toLocaleString()}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Neighborhood Selector */}
+                <NeighborhoodSelector
+                  catalog={catalog}
+                  selected={filters.neighborhoods}
+                  onChange={(neighs) => setFilters(prev => ({ ...prev, neighborhoods: neighs, page: 1 }))}
+                />
+
+                {/* Price (USD) */}
+                <div class="space-y-space-xs">
+                  <span class="font-label-md text-label-md text-on-surface uppercase tracking-wide">Precio (USD)</span>
+                  <div class="grid grid-cols-2 gap-2">
+                    <div class="bg-surface-container-low rounded p-2 flex flex-col">
+                      <span class="font-label-sm text-label-sm text-on-surface-variant">Mínimo</span>
+                      <input 
+                        class="bg-transparent font-metric-mono text-metric-mono text-on-surface focus:outline-none"
+                        type="number"
+                        placeholder="Mín"
+                        defaultValue={filters.min_price || ''}
+                        onBlur={(e) => setFilters(prev => ({ ...prev, min_price: e.target.value ? parseFloat(e.target.value) : undefined, page: 1 }))}
+                      />
+                    </div>
+                    <div class="bg-surface-container-low rounded p-2 flex flex-col">
+                      <span class="font-label-sm text-label-sm text-on-surface-variant">Máximo</span>
+                      <input 
+                        class="bg-transparent font-metric-mono text-metric-mono text-on-surface focus:outline-none"
+                        type="number"
+                        placeholder="Máx"
+                        defaultValue={filters.max_price || ''}
+                        onBlur={(e) => setFilters(prev => ({ ...prev, max_price: e.target.value ? parseFloat(e.target.value) : undefined, page: 1 }))}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Ambientes Number Selector */}
+                <div class="space-y-space-xs">
+                  <span class="font-label-md text-label-md text-on-surface uppercase tracking-wide">Ambientes</span>
+                  <div class="grid grid-cols-5 gap-1 font-metric-mono text-metric-mono">
+                    {[1, 2, 3, 4, 5].map(num => (
+                      <button 
+                        key={num}
+                        onClick={() => setFilters(prev => ({ ...prev, min_rooms: prev.min_rooms === num ? undefined : num, page: 1 }))}
+                        class={`py-1.5 rounded transition-colors ${filters.min_rooms === num ? 'bg-primary text-on-primary font-bold' : 'bg-surface-container-low hover:bg-surface-container text-on-surface'}`}
+                      >
+                        {num === 5 ? '5+' : num}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Portales Checklist */}
+                <div class="space-y-space-xs">
+                  <span class="font-label-md text-label-md text-on-surface uppercase tracking-wide">Portales</span>
+                  <div class="space-y-1 font-body-sm text-body-sm text-on-surface">
+                    {[
+                      { id: 'zonaprop', name: 'Zonaprop', count: stats?.by_portal?.zonaprop || 0 },
+                      { id: 'mercadolibre', name: 'Mercado Libre', count: stats?.by_portal?.mercadolibre || 0 },
+                      { id: 'remax', name: 'RE/MAX', count: stats?.by_portal?.remax || 0 },
+                      { id: 'argenprop', name: 'Argenprop', count: stats?.by_portal?.argenprop || 0 },
+                      { id: 'mudafy', name: 'Mudafy', count: stats?.by_portal?.mudafy || 0 }
+                    ].map(p => (
+                      <label key={p.id} class="flex items-center justify-between p-1.5 rounded hover:bg-surface-container-low cursor-pointer">
+                        <span class="flex items-center gap-2">
+                          <input 
+                            type="checkbox"
+                            checked={filters.portals.includes(p.id)}
+                            onChange={() => {
+                              const curr = filters.portals;
+                              setFilters(prev => ({ ...prev, portals: curr.includes(p.id) ? curr.filter(x => x !== p.id) : [...curr, p.id], page: 1 }));
+                            }}
+                            class="rounded text-primary cursor-pointer"
+                          />
+                          {p.name}
+                        </span>
+                        <span class="font-metric-mono text-metric-mono text-on-surface-variant">{p.count.toLocaleString()}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Action Button */}
+                <div class="pt-space-sm">
+                  <button 
+                    onClick={fetchProperties}
+                    class="w-full py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md transition-colors flex items-center justify-center gap-2 shadow-sm"
+                  >
+                    <span class="material-symbols-outlined text-[18px]">refresh</span>
+                    Actualizar Búsqueda
+                  </button>
                 </div>
               </div>
-
-              <div>
-                <h4 className="font-bold text-gray-700 uppercase mb-2">Fecha de Publicación</h4>
-                <select
-                  value={filters.date_filter || ''}
-                  onChange={(e) => setFilters(prev => ({ ...prev, date_filter: e.target.value, page: 1 }))}
-                  className="w-full border rounded p-1.5 font-medium bg-white text-gray-800 text-xs focus:ring-1 focus:ring-blue-500"
-                >
-                  <option value="">Cualquier fecha</option>
-                  <option value="last_1">Últimas 24 horas</option>
-                  <option value="last_7">Últimos 7 días</option>
-                  <option value="last_15">Últimos 15 días</option>
-                  <option value="last_30">Últimos 30 días</option>
-                  <option value="older_30">Más de 30 días (Antiguos)</option>
-                </select>
-              </div>
-
-              <hr />
-
-              <div>
-                <h4 className="font-bold text-gray-700 uppercase mb-2">Portales</h4>
-                {['zonaprop', 'mercadolibre', 'remax', 'argenprop', 'mudafy'].map(p => {
-                  const pName = {
-                    zonaprop: 'Zonaprop',
-                    mercadolibre: 'Mercado Libre',
-                    remax: 'RE/MAX',
-                    argenprop: 'Argenprop',
-                    mudafy: 'Mudafy',
-                    cabaprop: 'CabaProp',
-                    properati: 'Properati'
-                  }[p] || p;
-                  return (
-                    <label key={p} className="flex items-center justify-between py-0.5 cursor-pointer hover:text-blue-600">
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="checkbox"
-                          checked={filters.portals.includes(p)}
-                          onChange={() => {
-                            const curr = filters.portals;
-                            setFilters(prev => ({ ...prev, portals: curr.includes(p) ? curr.filter(x => x !== p) : [...curr, p], page: 1 }));
-                          }}
-                        />
-                        <span>{pName}</span>
-                      </div>
-                      <span className="text-gray-400">({stats?.by_portal?.[p] || 0})</span>
-                    </label>
-                  );
-                })}
-              </div>
-
             </aside>
 
-            <div className="flex-1 w-full space-y-4">
-              <div className="bg-white p-3 rounded-lg border flex flex-col md:flex-row justify-between items-center gap-3 shadow-xs">
-                <div>
-                  <h1 className="text-base md:text-lg font-black text-gray-900">Inmuebles en Venta</h1>
-                  <p className="text-xs text-gray-500"><strong>{total.toLocaleString()}</strong> resultados encontrados</p>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-2">
-                  <div className="flex items-center bg-gray-100 p-0.5 rounded border text-xs font-semibold">
-                    <button
-                      type="button"
-                      onClick={() => setViewMode('list')}
-                      className={'px-2.5 py-1 rounded flex items-center gap-1 transition-colors ' + (viewMode === 'list' ? 'bg-white shadow-xs text-blue-700 font-bold' : 'text-gray-600 hover:text-gray-900')}
-                      title="Vista de Listado"
-                    >
-                      <span>📋</span>
-                      <span className="hidden sm:inline">Listado</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setViewMode('split')}
-                      className={'px-2.5 py-1 rounded flex items-center gap-1 transition-colors ' + (viewMode === 'split' ? 'bg-white shadow-xs text-blue-700 font-bold' : 'text-gray-600 hover:text-gray-900')}
-                      title="Vista Dividida (Lista + Mapa)"
-                    >
-                      <span>🔲</span>
-                      <span className="hidden sm:inline">Dividido</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setViewMode('map')}
-                      className={'px-2.5 py-1 rounded flex items-center gap-1 transition-colors ' + (viewMode === 'map' ? 'bg-white shadow-xs text-blue-700 font-bold' : 'text-gray-600 hover:text-gray-900')}
-                      title="Vista de Mapa Completo"
-                    >
-                      <span>🗺️</span>
-                      <span className="hidden sm:inline">Mapa</span>
-                    </button>
+            {/* Main Content Area */}
+            <main class="flex-1 w-full px-margin min-h-screen bg-background pb-16 overflow-y-auto">
+              {/* Top Stats & Filter Summary Bar */}
+              <section class="w-full mb-space-md mt-6">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-space-sm bg-surface-container-lowest p-space-md rounded-xl shadow-sm border border-surface-variant/30">
+                  <div class="flex flex-col sm:flex-row sm:items-center gap-space-md">
+                    <div class="flex items-center gap-2">
+                      <span class="w-2.5 h-2.5 rounded-full bg-secondary-container animate-pulse"></span>
+                      <span class="font-headline-md text-headline-md text-on-surface font-extrabold">Inmuebles en Venta</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface font-metric-mono text-metric-mono">
+                        {total.toLocaleString()} resultados encontrados
+                      </span>
+                      <span class="hidden sm:inline text-on-surface-variant font-label-sm text-label-sm">• CABA & GBA</span>
+                    </div>
                   </div>
 
-                  <div className="flex items-center gap-1 text-xs">
-                    <select
-                      value={filters.sort_by}
-                      onChange={(e) => setFilters(prev => ({ ...prev, sort_by: e.target.value, page: 1 }))}
-                      className="border rounded p-1 font-semibold bg-gray-50 text-xs"
-                    >
-                      <option value="newest">Más recientes</option>
-                      <option value="price_asc">Menor precio (USD)</option>
-                      <option value="price_desc">Mayor precio (USD)</option>
-                      <option value="price_m2_asc">Menor valor por m²</option>
-                      <option value="price_m2_desc">Mayor valor por m²</option>
-                      <option value="area_desc">Mayor superficie (m²)</option>
-                    </select>
+                  <div class="flex flex-wrap items-center gap-space-sm">
+                    {/* View Switchers */}
+                    <div class="flex items-center bg-surface-container p-0.5 rounded-lg border border-surface-variant/40">
+                      <button 
+                        onClick={() => setViewMode('list')}
+                        class={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-label-md text-label-md transition-all ${viewMode === 'list' ? 'bg-surface-container-lowest text-on-surface font-bold shadow-sm' : 'text-on-surface-variant hover:text-on-surface'}`}
+                      >
+                        <span class="material-symbols-outlined text-[16px] text-secondary">view_agenda</span>
+                        <span>Listado</span>
+                      </button>
+                      <button 
+                        onClick={() => setViewMode('split')}
+                        class={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-label-md text-label-md transition-all ${viewMode === 'split' ? 'bg-surface-container-lowest text-on-surface font-bold shadow-sm' : 'text-on-surface-variant hover:text-on-surface'}`}
+                      >
+                        <span class="material-symbols-outlined text-[16px]">vertical_split</span>
+                        <span>Dividido</span>
+                      </button>
+                      <button 
+                        onClick={() => setViewMode('map')}
+                        class={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-label-md text-label-md transition-all ${viewMode === 'map' ? 'bg-surface-container-lowest text-on-surface font-bold shadow-sm' : 'text-on-surface-variant hover:text-on-surface'}`}
+                      >
+                        <span class="material-symbols-outlined text-[16px]">map</span>
+                        <span>Mapa</span>
+                      </button>
+                    </div>
+
+                    {/* Sort Select */}
+                    <div class="relative inline-flex items-center">
+                      <span class="material-symbols-outlined absolute left-2.5 text-on-surface-variant text-[18px] pointer-events-none">swap_vert</span>
+                      <select 
+                        value={filters.sort_by}
+                        onChange={(e) => setFilters(prev => ({ ...prev, sort_by: e.target.value, page: 1 }))}
+                        class="pl-8 pr-8 py-1.5 bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md rounded-lg appearance-none cursor-pointer focus:outline-none border border-surface-variant/40"
+                      >
+                        <option value="newest">Más recientes</option>
+                        <option value="price_asc">Menor precio</option>
+                        <option value="price_desc">Mayor precio</option>
+                        <option value="m2_asc">Menor USD/m²</option>
+                        <option value="price_diff">Mayor diferencia de portales</option>
+                      </select>
+                      <span class="material-symbols-outlined absolute right-2 text-on-surface-variant text-[16px] pointer-events-none">expand_more</span>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </section>
 
-              {loading ? (
-                <div className="bg-white rounded-lg border p-12 text-center text-gray-500 font-semibold">
-                  Cargando inmuebles...
+              {/* Market Intelligence KPI Banner */}
+              <section class="w-full mb-space-md grid grid-cols-1 md:grid-cols-4 gap-space-sm">
+                <div class="bg-surface-container-lowest p-space-sm rounded-xl shadow-sm border border-surface-variant/20 flex items-center justify-between">
+                  <div class="flex flex-col">
+                    <span class="font-label-sm text-label-sm text-on-surface-variant">Promedio USD/m² (CABA)</span>
+                    <span class="font-headline-md text-headline-md text-on-surface font-extrabold">USD 2.298</span>
+                    <span class="font-metric-mono text-metric-mono text-secondary">+1.4% este mes</span>
+                  </div>
+                  <div class="w-16 h-10 flex items-end gap-1">
+                    <span class="w-2 bg-secondary-fixed h-5 rounded-t-sm"></span>
+                    <span class="w-2 bg-secondary-fixed h-7 rounded-t-sm"></span>
+                    <span class="w-2 bg-secondary-fixed h-6 rounded-t-sm"></span>
+                    <span class="w-2 bg-secondary-fixed h-8 rounded-t-sm"></span>
+                    <span class="w-2 bg-secondary-container h-10 rounded-t-sm"></span>
+                  </div>
                 </div>
-              ) : properties.length === 0 ? (
-                <div className="bg-white rounded-lg border p-12 text-center text-gray-500 space-y-2">
-                  <div className="text-3xl">🏠</div>
-                  <h3 className="font-bold">No se encontraron inmuebles con esos filtros</h3>
+
+                <div class="bg-surface-container-lowest p-space-sm rounded-xl shadow-sm border border-surface-variant/20 flex items-center justify-between">
+                  <div class="flex flex-col">
+                    <span class="font-label-sm text-label-sm text-on-surface-variant">Duplicados Identificados</span>
+                    <span class="font-headline-md text-headline-md text-on-surface font-extrabold">367 clusters</span>
+                    <span class="font-metric-mono text-metric-mono text-on-secondary-container">Ofertas cruzadas unificadas</span>
+                  </div>
+                  <div class="w-10 h-10 rounded-full bg-secondary-fixed flex items-center justify-center text-on-secondary-fixed">
+                    <span class="material-symbols-outlined text-[20px]">content_copy</span>
+                  </div>
                 </div>
-              ) : viewMode === 'map' ? (
-                <div className="h-[75vh] w-full">
-                  <MapView
+
+                <div class="bg-surface-container-lowest p-space-sm rounded-xl shadow-sm border border-surface-variant/20 flex items-center justify-between">
+                  <div class="flex flex-col">
+                    <span class="font-label-sm text-label-sm text-on-surface-variant">Ahorro Máx. Detectado</span>
+                    <span class="font-headline-md text-headline-md text-secondary font-extrabold">USD 14.000</span>
+                    <span class="font-body-sm text-body-sm text-on-surface-variant">Diferencia entre portales</span>
+                  </div>
+                  <div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-primary">
+                    <span class="material-symbols-outlined text-[20px]">price_check</span>
+                  </div>
+                </div>
+
+                <div class="bg-primary text-on-primary p-space-sm rounded-xl shadow-sm flex flex-col justify-between">
+                  <div class="flex items-center justify-between">
+                    <span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary-container font-bold">Auditoría en tiempo real</span>
+                    <span class="w-2 h-2 rounded-full bg-secondary-container animate-ping"></span>
+                  </div>
+                  <div class="flex items-baseline justify-between mt-1">
+                    <span class="font-headline-md text-headline-md text-on-primary font-bold">5 Portales</span>
+                    <span class="font-label-sm text-label-sm text-surface-dim">Keep-Alive 24/7</span>
+                  </div>
+                </div>
+              </section>
+
+              {/* View Layout (List / Split / Map) */}
+              {viewMode === 'map' ? (
+                <div className="w-full h-[750px] rounded-xl overflow-hidden shadow-sm border border-surface-variant/30">
+                  <MapView 
                     properties={properties}
-                    selectedId={selectedPropertyId}
-                    onSelect={setSelectedPropertyId}
+                    selectedId={selectedId}
+                    onSelect={(id) => setSelectedId(id)}
                     activeNeighborhoods={filters.neighborhoods}
                   />
                 </div>
               ) : viewMode === 'split' ? (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
-                  <div className="space-y-3 max-h-[80vh] overflow-y-auto pr-1">
-                    {properties.map(p => (
-                      <PropertyItem
-                        key={p.id}
-                        property={p}
-                        isSelected={p.id === selectedPropertyId}
-                        onSelect={setSelectedPropertyId}
-                        onToggleFavorite={handleToggleFavorite}
-                        onToggleDiscard={handleToggleDiscard}
-                        onSaveNotes={handleSaveNotes}
-                      />
-                    ))}
+                <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+                  {/* Left Cards (7 Cols) */}
+                  <div className="xl:col-span-7 flex flex-col gap-space-md">
+                    {loading ? (
+                      <div className="bg-surface-container-lowest p-12 text-center rounded-xl border border-surface-variant/30">
+                        <span className="material-symbols-outlined text-4xl text-secondary animate-spin">sync</span>
+                        <p className="mt-2 font-semibold text-gray-700">Cargando propiedades...</p>
+                      </div>
+                    ) : properties.length === 0 ? (
+                      <div className="bg-surface-container-lowest p-12 text-center rounded-xl border border-surface-variant/30">
+                        <span className="material-symbols-outlined text-4xl text-gray-400">search_off</span>
+                        <p className="mt-2 font-bold text-gray-700">No se encontraron propiedades con esos filtros.</p>
+                      </div>
+                    ) : (
+                      properties.map(p => (
+                        <StitchPropertyCard
+                          key={p.id}
+                          property={p}
+                          isSelected={selectedId === p.id}
+                          onSelect={(id) => setSelectedId(id)}
+                          onToggleFavorite={toggleFavorite}
+                          onToggleDiscard={toggleDiscard}
+                          onSaveNotes={saveNotes}
+                        />
+                      ))
+                    )}
                   </div>
-                  <div className="sticky top-24 h-[80vh]">
-                    <MapView
+
+                  {/* Right Map (5 Cols Sticky) */}
+                  <div className="xl:col-span-5 sticky top-32 h-[calc(100vh-160px)] min-h-[500px] rounded-xl overflow-hidden shadow-sm border border-surface-variant/30">
+                    <MapView 
                       properties={properties}
-                      selectedId={selectedPropertyId}
-                      onSelect={setSelectedPropertyId}
+                      selectedId={selectedId}
+                      onSelect={(id) => setSelectedId(id)}
                       activeNeighborhoods={filters.neighborhoods}
                     />
                   </div>
                 </div>
               ) : (
-                <div className="space-y-3">
-                  {properties.map(p => (
-                    <PropertyItem
-                      key={p.id}
-                      property={p}
-                      isSelected={p.id === selectedPropertyId}
-                      onSelect={setSelectedPropertyId}
-                      onToggleFavorite={handleToggleFavorite}
-                      onToggleDiscard={handleToggleDiscard}
-                      onSaveNotes={handleSaveNotes}
-                    />
-                  ))}
+                /* Pure List View */
+                <div className="flex flex-col gap-space-md w-full">
+                  {loading ? (
+                    <div className="bg-surface-container-lowest p-12 text-center rounded-xl border border-surface-variant/30">
+                      <span className="material-symbols-outlined text-4xl text-secondary animate-spin">sync</span>
+                      <p className="mt-2 font-semibold text-gray-700">Cargando propiedades...</p>
+                    </div>
+                  ) : properties.length === 0 ? (
+                    <div className="bg-surface-container-lowest p-12 text-center rounded-xl border border-surface-variant/30">
+                      <span className="material-symbols-outlined text-4xl text-gray-400">search_off</span>
+                      <p className="mt-2 font-bold text-gray-700">No se encontraron propiedades con esos filtros.</p>
+                    </div>
+                  ) : (
+                    properties.map(p => (
+                      <StitchPropertyCard
+                        key={p.id}
+                        property={p}
+                        isSelected={selectedId === p.id}
+                        onSelect={(id) => setSelectedId(id)}
+                        onToggleFavorite={toggleFavorite}
+                        onToggleDiscard={toggleDiscard}
+                        onSaveNotes={saveNotes}
+                      />
+                    ))
+                  )}
                 </div>
               )}
 
-              {!loading && totalPages > 1 && viewMode !== 'map' && (
-                <div className="bg-white p-3 rounded-lg border flex justify-between items-center text-xs">
-                  <div>Página {filters.page} de {totalPages} (Mostrando {properties.length} inmuebles)</div>
-                  <div className="flex gap-1">
-                    <button
-                      onClick={() => setFilters(prev => ({ ...prev, page: Math.max(prev.page - 1, 1) }))}
-                      disabled={filters.page <= 1}
-                      className="px-3 py-1 border rounded disabled:opacity-40"
-                    >
-                      Anterior
-                    </button>
-                    <button
-                      onClick={() => setFilters(prev => ({ ...prev, page: Math.min(prev.page + 1, totalPages) }))}
-                      disabled={filters.page >= totalPages}
-                      className="px-3 py-1 border rounded disabled:opacity-40"
-                    >
-                      Siguiente
-                    </button>
-                  </div>
+              {/* Pagination Strip */}
+              <section class="w-full mt-space-lg flex flex-col sm:flex-row items-center justify-between gap-space-md p-space-md bg-surface-container-lowest rounded-xl shadow-sm border border-surface-variant/30">
+                <div class="font-body-sm text-body-sm text-on-surface-variant">
+                  Mostrando página <span class="font-bold text-on-surface">{filters.page}</span> de <span class="font-bold text-on-surface">{totalPages}</span> ({total.toLocaleString()} propiedades)
                 </div>
-              )}
-            </div>
-          </main>
+                
+                <div class="flex items-center gap-1">
+                  <button 
+                    disabled={filters.page <= 1}
+                    onClick={() => setFilters(prev => ({ ...prev, page: Math.max(1, prev.page - 1) }))}
+                    class="w-9 h-9 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface-variant flex items-center justify-center transition-colors disabled:opacity-40"
+                  >
+                    <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+                  </button>
 
-          {isScrapeModalOpen && (
-            <ScrapeModalComponent
-              isOpen={isScrapeModalOpen}
-              onClose={() => setIsScrapeModalOpen(false)}
-              onCompleted={() => { fetchProperties(); fetchStats(); }}
-            />
-          )}
+                  <span class="px-3 py-1.5 rounded-lg bg-primary text-on-primary font-metric-mono text-metric-mono shadow-sm">
+                    {filters.page}
+                  </span>
+
+                  <button 
+                    disabled={filters.page >= totalPages}
+                    onClick={() => setFilters(prev => ({ ...prev, page: Math.min(totalPages, prev.page + 1) }))}
+                    class="w-9 h-9 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface-variant flex items-center justify-center transition-colors disabled:opacity-40"
+                  >
+                    <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                  </button>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <span class="font-label-sm text-label-sm text-on-surface-variant">Por página:</span>
+                  <select 
+                    value={filters.page_size}
+                    onChange={(e) => setFilters(prev => ({ ...prev, page_size: parseInt(e.target.value), page: 1 }))}
+                    class="px-2.5 py-1 bg-surface-container text-on-surface font-metric-mono text-metric-mono rounded-lg focus:outline-none cursor-pointer border border-surface-variant/40"
+                  >
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="150">150</option>
+                  </select>
+                </div>
+              </section>
+            </main>
+          </div>
         </div>
       );
     }
 
-    function NeighborhoodSelector({ catalog, selected, onChange }) {
-      const [isOpen, setIsOpen] = useState(false);
-      const [search, setSearch] = useState('');
-      const [activeZone, setActiveZone] = useState('CABA');
-      const zones = Object.keys(catalog);
+    // Stitch Property Card Component
+    function StitchPropertyCard({ property, isSelected, onSelect, onToggleFavorite, onToggleDiscard, onSaveNotes }) {
+      const [showDups, setShowDups] = useState(false);
+      const [isEditingNote, setIsEditingNote] = useState(false);
+      const [noteText, setNoteText] = useState(property.user_notes || '');
 
-      const toggleNeigh = (n) => {
-        onChange(selected.includes(n) ? selected.filter(x => x !== n) : [...selected, n]);
+      const defaultImg = 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80';
+      const displayImg = (property.images && property.images.length > 0) ? property.images[0] : defaultImg;
+      const dups = property.duplicates || [];
+      const daysText = formatDaysPublished(property.publication_date || property.scraped_at);
+
+      const portalBadges = {
+        mercadolibre: { bg: 'bg-[#FFE600] text-[#00174b]', name: 'Mercado Libre' },
+        zonaprop: { bg: 'bg-[#E11D48] text-white', name: 'Zonaprop' },
+        remax: { bg: 'bg-[#dc2626] text-white', name: 'RE/MAX' },
+        argenprop: { bg: 'bg-[#2563eb] text-white', name: 'Argenprop' },
+        mudafy: { bg: 'bg-[#10b981] text-white', name: 'Mudafy' }
       };
 
-      const selectAllInActiveZone = () => {
-        const list = (catalog[activeZone] || []).filter(n => !search || n.toLowerCase().includes(search.toLowerCase()));
-        const set = new Set([...selected, ...list]);
-        onChange(Array.from(set));
-      };
-
-      const deselectAllInActiveZone = () => {
-        const list = (catalog[activeZone] || []).filter(n => !search || n.toLowerCase().includes(search.toLowerCase()));
-        onChange(selected.filter(n => !list.includes(n)));
-      };
+      const portalConfig = portalBadges[property.portal] || { bg: 'bg-gray-800 text-white', name: property.portal };
 
       return (
-        <div>
-          <div className="flex justify-between items-center mb-1">
-            <label className="font-bold text-gray-700 uppercase">Barrios</label>
-            {selected.length > 0 && (
-              <button onClick={() => onChange([])} className="text-blue-600 hover:underline">
-                Limpiar ({selected.length})
-              </button>
-            )}
-          </div>
-          <button
-            type="button"
-            onClick={() => setIsOpen(!isOpen)}
-            className="w-full bg-white border rounded p-1.5 text-left flex justify-between items-center"
-          >
-            <span>{selected.length === 0 ? 'Seleccionar barrios...' : selected.length + ' seleccionados'}</span>
-            <span>{isOpen ? '▲' : '▼'}</span>
-          </button>
-          {selected.length > 0 && (
-            <div className="flex flex-wrap gap-1 mt-1 max-h-24 overflow-y-auto p-1 bg-gray-50 rounded border">
-              {selected.map(n => (
-                <span key={n} className="bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded border text-[11px] flex items-center gap-1">
-                  {n}
-                  <button onClick={() => toggleNeigh(n)} className="font-bold">×</button>
-                </span>
-              ))}
-            </div>
-          )}
-          {isOpen && (
-            <div className="mt-2 p-2 bg-white border rounded shadow-lg">
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Buscar barrio..."
-                className="w-full p-1 border rounded mb-2 text-xs"
+        <article 
+          onClick={() => onSelect && onSelect(property.id)}
+          class={`bg-surface-container-lowest rounded-xl shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col border cursor-pointer ${isSelected ? 'border-primary ring-2 ring-secondary-container' : 'border-surface-variant/30'}`}
+        >
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-0">
+            {/* Image Column (5 Cols) */}
+            <div class="lg:col-span-5 relative group overflow-hidden bg-surface-container min-h-[240px] lg:min-h-full">
+              <img 
+                src={displayImg} 
+                alt={property.title} 
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 min-h-[240px] max-h-[320px] lg:max-h-full"
+                onError={(e) => { e.target.src = defaultImg; }}
               />
-              {!search && (
-                <div className="flex border-b mb-2 overflow-x-auto text-[11px]">
-                  {zones.map(z => (
-                    <button
-                      key={z}
-                      onClick={() => setActiveZone(z)}
-                      className={'px-2 py-0.5 font-semibold border-b-2 whitespace-nowrap ' + (activeZone === z ? 'border-blue-600 text-blue-600' : 'text-gray-500')}
-                    >
-                      {z}
-                    </button>
-                  ))}
-                </div>
-              )}
-              <div className="flex justify-between items-center mb-2 px-0.5 text-[11px]">
-                <button
-                  type="button"
-                  onClick={selectAllInActiveZone}
-                  className="text-blue-700 hover:underline font-semibold"
+
+              {/* Overlaid Badges */}
+              <div class="absolute top-3 left-3 flex flex-wrap items-center gap-1.5 z-10">
+                <span class={`px-2.5 py-1 rounded font-metric-mono text-metric-mono shadow-sm ${portalConfig.bg}`}>
+                  {portalConfig.name}
+                </span>
+                <span class="px-2.5 py-1 rounded bg-inverse-surface/85 backdrop-blur-md text-inverse-on-surface font-label-md text-label-md uppercase">
+                  {property.property_type}
+                </span>
+              </div>
+
+              {/* Favorite Button */}
+              <div class="absolute top-3 right-3 flex items-center gap-1.5 z-10">
+                <button 
+                  onClick={(e) => { e.stopPropagation(); onToggleFavorite(property.id); }}
+                  class="w-8 h-8 rounded-full bg-surface-container-lowest/90 hover:bg-surface-container-lowest shadow-sm flex items-center justify-center text-secondary transition-colors"
+                  title="Guardar a favoritos"
                 >
-                  ✓ Seleccionar todos ({activeZone})
-                </button>
-                <button
-                  type="button"
-                  onClick={deselectAllInActiveZone}
-                  className="text-gray-500 hover:text-red-600"
-                >
-                  Desmarcar
+                  <span class="material-symbols-outlined text-[18px]">
+                    {property.is_favorite ? 'favorite' : 'favorite_border'}
+                  </span>
                 </button>
               </div>
-              <div className="max-h-40 overflow-y-auto space-y-1">
-                {(catalog[activeZone] || []).filter(n => !search || n.toLowerCase().includes(search.toLowerCase())).map(n => (
-                  <label key={n} className="flex items-center gap-1.5 p-0.5 hover:bg-gray-50 rounded cursor-pointer text-xs">
-                    <input
-                      type="checkbox"
-                      checked={selected.includes(n)}
-                      onChange={() => toggleNeigh(n)}
-                      className="rounded text-blue-600"
-                    />
-                    <span>{n}</span>
-                  </label>
-                ))}
-              </div>
-              <div className="mt-2 pt-1 border-t flex justify-end">
-                <button onClick={() => setIsOpen(false)} className="bg-blue-600 text-white px-2 py-0.5 rounded text-xs">Listo</button>
+
+              {/* Overlay Bottom USD/m2 & Photos */}
+              <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between z-10 pointer-events-none">
+                {property.price_per_m2 ? (
+                  <span class="px-2.5 py-1 rounded bg-inverse-surface/90 text-inverse-on-surface font-metric-mono text-metric-mono backdrop-blur-sm">
+                    USD {Math.round(property.price_per_m2).toLocaleString()} / m²
+                  </span>
+                ) : <span />}
+                
+                {property.images && property.images.length > 0 && (
+                  <span class="px-2 py-0.5 rounded bg-inverse-surface/80 text-inverse-on-surface font-label-sm text-label-sm flex items-center gap-1 backdrop-blur-sm">
+                    <span class="material-symbols-outlined text-[14px]">photo_camera</span> {property.images.length}
+                  </span>
+                )}
               </div>
             </div>
-          )}
-        </div>
+
+            {/* Content Column (7 Cols) */}
+            <div class="lg:col-span-7 p-space-md flex flex-col justify-between">
+              <div>
+                {/* Header Price & Trends */}
+                <div class="flex items-start justify-between gap-space-sm mb-2">
+                  <div class="flex items-baseline gap-2">
+                    <span class="font-price-xl text-price-xl text-on-surface font-extrabold">
+                      USD {property.price_usd ? property.price_usd.toLocaleString() : 'Consultar'}
+                    </span>
+                  </div>
+                  {daysText && (
+                    <span class="px-2.5 py-1 rounded-full bg-surface-container text-on-surface font-label-sm text-label-sm flex items-center gap-1">
+                      <span class="material-symbols-outlined text-secondary text-[14px]">schedule</span> {daysText}
+                    </span>
+                  )}
+                </div>
+
+                {/* Location & Title */}
+                <div class="mb-3">
+                  <div class="flex items-center gap-1 text-on-surface-variant font-label-md text-label-md mb-0.5">
+                    <span class="material-symbols-outlined text-secondary text-[16px]">location_on</span>
+                    <span>{property.neighborhood}, {property.zone} {property.address && `• ${property.address}`}</span>
+                  </div>
+                  <h2 class="font-headline-md text-[17px] leading-snug font-bold text-on-surface hover:text-secondary transition-colors line-clamp-2">
+                    {property.title}
+                  </h2>
+                </div>
+
+                {/* Feature Chips */}
+                <div class="flex flex-wrap items-center gap-2 mb-space-md">
+                  {property.total_area_m2 && (
+                    <div class="px-3 py-1.5 rounded-lg bg-surface-container-low flex items-center gap-1.5 text-on-surface font-body-sm text-body-sm">
+                      <span class="material-symbols-outlined text-secondary text-[16px]">square_foot</span>
+                      <span class="font-bold">{Math.round(property.total_area_m2)} m²</span> <span class="text-on-surface-variant">tot.</span>
+                    </div>
+                  )}
+                  {property.covered_area_m2 && property.covered_area_m2 !== property.total_area_m2 && (
+                    <div class="px-3 py-1.5 rounded-lg bg-surface-container-low flex items-center gap-1.5 text-on-surface font-body-sm text-body-sm">
+                      <span class="material-symbols-outlined text-secondary text-[16px]">home</span>
+                      <span class="font-bold">{Math.round(property.covered_area_m2)} m²</span> <span class="text-on-surface-variant">cub.</span>
+                    </div>
+                  )}
+                  {property.bedrooms !== null && (
+                    <div class="px-3 py-1.5 rounded-lg bg-surface-container-low flex items-center gap-1.5 text-on-surface font-body-sm text-body-sm">
+                      <span class="material-symbols-outlined text-secondary text-[16px]">bed</span>
+                      <span class="font-bold">{property.bedrooms}</span> <span class="text-on-surface-variant">dorm.</span>
+                    </div>
+                  )}
+                  {property.bathrooms !== null && (
+                    <div class="px-3 py-1.5 rounded-lg bg-surface-container-low flex items-center gap-1.5 text-on-surface font-body-sm text-body-sm">
+                      <span class="material-symbols-outlined text-secondary text-[16px]">bathtub</span>
+                      <span class="font-bold">{property.bathrooms}</span> <span class="text-on-surface-variant">baño</span>
+                    </div>
+                  )}
+                  {property.expenses && (
+                    <div class="px-2.5 py-1.5 rounded-lg bg-surface-container-high text-on-surface font-label-sm text-label-sm">
+                      Expensas ${Math.round(property.expenses).toLocaleString()}
+                    </div>
+                  )}
+                </div>
+
+                {/* Deduplication Multi-portal Drawer */}
+                {dups.length > 1 ? (
+                  <div class="p-space-sm rounded-lg bg-secondary-fixed/30 mb-space-md border border-secondary-fixed/50">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-secondary text-[18px]">travel_explore</span>
+                        <div>
+                          <span class="font-label-md text-label-md text-on-secondary-fixed font-bold">{dups.length} portales detectados</span>
+                          <span class="font-body-sm text-body-sm text-on-secondary-fixed-variant ml-1.5 hidden md:inline">Mismo inmueble</span>
+                        </div>
+                      </div>
+                      <div class="flex items-center gap-1.5">
+                        <span class="px-2 py-0.5 rounded bg-surface-container-lowest text-on-surface font-metric-mono text-metric-mono">
+                          Mejor precio: <span class="text-secondary font-bold">USD {Math.min(...dups.map(d => d.price_usd)).toLocaleString()}</span>
+                        </span>
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); setShowDups(!showDups); }}
+                          class="px-2.5 py-1 rounded bg-secondary-fixed hover:bg-secondary-fixed-dim text-on-secondary-fixed font-label-sm text-label-sm flex items-center gap-1 transition-colors"
+                        >
+                          <span>{showDups ? 'Ocultar' : 'Comparar'}</span>
+                          <span class="material-symbols-outlined text-[14px]">{showDups ? 'expand_less' : 'expand_more'}</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {showDups && (
+                      <div class="mt-3 pt-3 border-t border-secondary-fixed/40 space-y-2">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+                          {dups.map((d, idx) => (
+                            <div key={idx} class="p-2 rounded bg-surface-container-lowest flex items-center justify-between shadow-2xs">
+                              <div class="flex items-center gap-1.5">
+                                <span class={`w-2 h-2 rounded-full ${d.portal === 'zonaprop' ? 'bg-[#E11D48]' : d.portal === 'remax' ? 'bg-[#dc2626]' : 'bg-[#FFE600]'}`}></span>
+                                <span class="font-label-md text-label-md text-on-surface capitalize">{d.portal}</span>
+                              </div>
+                              <div class="flex items-center gap-2">
+                                <span class="font-metric-mono text-metric-mono text-secondary font-bold">USD {d.price_usd.toLocaleString()}</span>
+                                <a href={d.url} target="_blank" rel="noopener noreferrer" class="text-primary hover:underline text-[11px] font-bold">Abrir ↗</a>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : null}
+
+                {/* User Notes Box */}
+                {isEditingNote ? (
+                  <div class="mb-2 flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                    <input 
+                      type="text" 
+                      value={noteText} 
+                      onChange={(e) => setNoteText(e.target.value)}
+                      placeholder="Agregar nota privada..."
+                      class="flex-1 p-1.5 border rounded-lg text-xs bg-surface"
+                    />
+                    <button 
+                      onClick={() => { onSaveNotes(property.id, noteText); setIsEditingNote(false); }}
+                      class="px-3 py-1 bg-primary text-on-primary rounded-lg text-xs font-bold"
+                    >
+                      Guardar
+                    </button>
+                  </div>
+                ) : property.user_notes ? (
+                  <div class="mb-2 p-2 rounded-lg bg-amber-50 text-amber-900 border border-amber-200 text-xs flex justify-between items-center">
+                    <span><strong>Nota:</strong> {property.user_notes}</span>
+                    <button onClick={(e) => { e.stopPropagation(); setIsEditingNote(true); }} class="text-xs text-blue-600 hover:underline">Editar</button>
+                  </div>
+                ) : null}
+              </div>
+
+              {/* Bottom Footer Strip */}
+              <div class="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm border-t border-surface-variant/20">
+                <div class="flex items-center gap-3">
+                  <div class="flex items-center gap-1.5 text-on-surface-variant font-body-sm text-body-sm">
+                    <span class="material-symbols-outlined text-[16px]">real_estate_agent</span>
+                    <span class="truncate max-w-[200px]">{property.seller_name || 'Inmobiliaria'}</span>
+                  </div>
+                  {!property.user_notes && !isEditingNote && (
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); setIsEditingNote(true); }}
+                      class="font-label-sm text-label-sm text-secondary hover:text-on-secondary-container flex items-center gap-1 transition-colors"
+                    >
+                      <span class="material-symbols-outlined text-[14px]">edit_note</span> + Nota
+                    </button>
+                  )}
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); onToggleDiscard(property.id); }}
+                    class="w-9 h-9 rounded-lg bg-surface-container-low hover:bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-error transition-colors"
+                    title="Descartar propiedad"
+                  >
+                    <span class="material-symbols-outlined text-[18px]">delete_outline</span>
+                  </button>
+                  <a 
+                    href={property.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    class="px-4 py-2 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md flex items-center gap-1.5 transition-colors shadow-sm font-bold"
+                  >
+                    <span>Ver en portal</span>
+                    <span class="material-symbols-outlined text-[16px]">open_in_new</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
       );
     }
 
+    // Interactive Leaflet Map Component
     function MapView({ properties, selectedId, onSelect, activeNeighborhoods }) {
-      const mapContainerRef = React.useRef(null);
-      const mapInstanceRef = React.useRef(null);
-      const markersLayerRef = React.useRef(null);
-      const markersByIdRef = React.useRef({});
+      const mapContainerRef = useRef(null);
+      const mapInstanceRef = useRef(null);
+      const markersClusterGroupRef = useRef(null);
+      const markersByIdRef = useRef({});
 
-      React.useEffect(() => {
+      useEffect(() => {
         if (!mapContainerRef.current) return;
 
         if (!mapInstanceRef.current) {
           const map = L.map(mapContainerRef.current, {
-            center: [-34.6037, -58.3816],
-            zoom: 12,
+            center: [-34.5800, -58.4800],
+            zoom: 13,
             zoomControl: true
           });
 
-          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors',
+          L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap &copy; CARTO',
             maxZoom: 19
           }).addTo(map);
 
-          mapInstanceRef.current = map;
-          markersLayerRef.current = L.markerClusterGroup({
+          const clusterGroup = L.markerClusterGroup({
             showCoverageOnHover: false,
-            maxClusterRadius: 18,
-            disableClusteringAtZoom: 14,
+            maxClusterRadius: 35,
             spiderfyOnMaxZoom: true,
-            iconCreateFunction: function (cluster) {
+            iconCreateFunction: function(cluster) {
               const count = cluster.getChildCount();
               return L.divIcon({
-                html: `<div class="price-pill" style="background-color: #ea580c; padding: 3px 8px; font-size: 11px;">🏠 ${count}</div>`,
-                className: 'custom-price-marker',
-                iconSize: [46, 26]
+                html: `<div style="background-color: #ff5a00; color: #fff; font-weight: 800; font-size: 11px; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.4); border: 2px solid #fff;">${count}</div>`,
+                className: 'marker-cluster-custom',
+                iconSize: L.point(32, 32)
               });
             }
           });
-          map.addLayer(markersLayerRef.current);
+
+          map.addLayer(clusterGroup);
+          mapInstanceRef.current = map;
+          markersClusterGroupRef.current = clusterGroup;
         }
 
         const map = mapInstanceRef.current;
-        const markersGroup = markersLayerRef.current;
+        const markersGroup = markersClusterGroupRef.current;
         markersGroup.clearLayers();
         markersByIdRef.current = {};
 
@@ -845,20 +1306,24 @@
           let lat = p.latitude;
           let lng = p.longitude;
 
-          if (!lat || !lng || isNaN(lat) || isNaN(lng) || (lat === 0 && lng === 0)) {
-            const base = NEIGHBORHOOD_COORDS[p.neighborhood] || NEIGHBORHOOD_COORDS["Caballito"] || [-34.6186, -58.4428];
-            const seed = p.id || 1;
-            const angle = (seed * 137.5) * (Math.PI / 180);
-            const radius = 0.0016 + ((seed % 35) / 35) * 0.0065;
-            lat = base[0] + Math.sin(angle) * radius;
-            lng = base[1] + Math.cos(angle) * radius * 1.35;
+          if (!lat || !lng || isNaN(lat) || isNaN(lng) || lat === 0 || lng === 0) {
+            const fallback = NEIGHBORHOOD_COORDS[p.neighborhood] || [-34.6037, -58.3816];
+            const randLat = (Math.random() - 0.5) * 0.008;
+            const randLng = (Math.random() - 0.5) * 0.008;
+            lat = fallback[0] + randLat;
+            lng = fallback[1] + randLng;
           }
 
           bounds.push([lat, lng]);
 
-          const priceText = formatPricePill(p.price_usd);
-          const isSelected = selectedId === p.id;
+          let priceText = 'Consultar';
+          if (p.price_usd) {
+            const valK = Math.round(p.price_usd / 1000);
+            priceText = `USD ${valK}K`;
+          }
+
           const isFav = p.is_favorite;
+          const isSelected = selectedId === p.id;
 
           const icon = L.divIcon({
             className: 'custom-price-marker',
@@ -870,22 +1335,15 @@
           const marker = L.marker([lat, lng], { icon: icon });
           markersByIdRef.current[p.id] = { marker, lat, lng };
 
-          const portalColor = {
-            mercadolibre: 'bg-amber-100 text-amber-900 border-amber-300',
-            zonaprop: 'bg-fuchsia-100 text-fuchsia-900 border-fuchsia-300',
-            argenprop: 'bg-blue-100 text-blue-900 border-blue-300',
-            mudafy: 'bg-emerald-100 text-emerald-900 border-emerald-300'
-          }[p.portal] || 'bg-gray-100';
-
           const imgUrl = (p.images && p.images.length > 0) ? p.images[0] : 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=600&q=80';
           const daysText = formatDaysPublished(p.publication_date || p.scraped_at);
 
           const popupHtml = `
-            <div style="width: 250px; font-family: -apple-system, sans-serif; font-size: 12px; color: #1f2937;">
+            <div style="width: 250px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; color: #1f2937;">
               <div style="position: relative; height: 130px; background-color: #f3f4f6;">
                 <img src="${imgUrl}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=600&q=80'" />
                 <div style="position: absolute; top: 6px; left: 6px; display: flex; gap: 4px;">
-                  <span style="font-size: 9px; font-weight: bold; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.9); border: 1px solid #ccc;">${p.portal === 'mercadolibre' ? 'Mercado Libre' : p.portal}</span>
+                  <span style="font-size: 9px; font-weight: bold; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.9); border: 1px solid #ccc; text-transform: uppercase;">${p.portal}</span>
                   <span style="font-size: 9px; font-weight: bold; text-transform: uppercase; background: rgba(0,0,0,0.75); color: #fff; padding: 2px 6px; border-radius: 4px;">${p.property_type}</span>
                 </div>
                 ${p.price_per_m2 ? `<div style="position: absolute; bottom: 6px; left: 6px; background: rgba(15,23,42,0.85); color: #fff; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px;">USD ${Math.round(p.price_per_m2).toLocaleString()}/m²</div>` : ''}
@@ -897,15 +1355,8 @@
                 </div>
                 <div style="font-weight: 700; color: #334155; font-size: 11px; margin-bottom: 4px;">📍 ${p.neighborhood || ''} ${p.address ? '· ' + p.address : ''}</div>
                 <div style="font-size: 11px; color: #64748b; line-height: 1.25; height: 26px; overflow: hidden; margin-bottom: 6px;">${p.title || ''}</div>
-                <div style="display: flex; flex-wrap: wrap; gap: 4px; font-size: 10px; color: #475569; margin-bottom: 10px;">
-                  ${p.total_area_m2 ? `<span style="background: #f1f5f9; padding: 2px 5px; border-radius: 4px;">📐 <strong>${Math.round(p.total_area_m2)}</strong> m² tot</span>` : ''}
-                  ${p.covered_area_m2 && p.covered_area_m2 !== p.total_area_m2 ? `<span style="background: #eff6ff; color: #1e40af; padding: 2px 5px; border-radius: 4px; border: 1px solid #dbeafe;">🏠 <strong>${Math.round(p.covered_area_m2)}</strong> m² cub</span>` : ''}
-                  ${p.bedrooms !== null ? `<span style="background: #f1f5f9; padding: 2px 5px; border-radius: 4px;">🛏️ <strong>${p.bedrooms}</strong> dorm</span>` : ''}
-                  ${p.antiquity ? `<span style="background: #faf5ff; color: #6b21a8; padding: 2px 5px; border-radius: 4px; border: 1px solid #f3e8ff;">🏛️ ${p.antiquity}</span>` : ''}
-                  ${p.disposition ? `<span style="background: #fffbeb; color: #92400e; padding: 2px 5px; border-radius: 4px; border: 1px solid #fef3c7;">🏢 ${p.disposition}</span>` : ''}
-                </div>
                 <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 8px;">
-                  <a href="${p.url}" target="_blank" rel="noopener noreferrer" style="background: #2563eb; color: #fff; text-decoration: none; font-weight: bold; font-size: 11px; padding: 5px 12px; border-radius: 6px; display: inline-block;">
+                  <a href="${p.url}" target="_blank" rel="noopener noreferrer" style="background: #000000; color: #fff; text-decoration: none; font-weight: bold; font-size: 11px; padding: 5px 12px; border-radius: 6px; display: inline-block;">
                     Ver en portal ↗
                   </a>
                 </div>
@@ -942,8 +1393,96 @@
       }, [properties, selectedId, activeNeighborhoods]);
 
       return (
-        <div className="relative w-full h-full min-h-[480px] rounded-lg border overflow-hidden shadow-sm bg-gray-100">
+        <div className="relative w-full h-full min-h-[480px] rounded-xl border border-surface-variant/30 overflow-hidden shadow-sm bg-gray-100">
           <div ref={mapContainerRef} className="w-full h-full min-h-[480px]" />
+        </div>
+      );
+    }
+
+    // Searchable Neighborhood Selector Component
+    function NeighborhoodSelector({ catalog, selected, onChange }) {
+      const [isOpen, setIsOpen] = useState(false);
+      const [searchTerm, setSearchTerm] = useState('');
+      const [selectedZone, setSelectedZone] = useState('CABA');
+
+      const currentNeighborhoods = catalog[selectedZone] || [];
+      const filtered = currentNeighborhoods.filter(n =>
+        n.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+
+      const toggleNeighborhood = (n) => {
+        if (selected.includes(n)) {
+          onChange(selected.filter(x => x !== n));
+        } else {
+          onChange([...selected, n]);
+        }
+      };
+
+      return (
+        <div className="space-y-space-xs">
+          <div className="flex justify-between items-center">
+            <span className="font-label-md text-label-md text-on-surface uppercase tracking-wide">Barrios</span>
+            {selected.length > 0 && (
+              <button onClick={() => onChange([])} className="text-[11px] text-blue-600 hover:underline">
+                Limpiar ({selected.length})
+              </button>
+            )}
+          </div>
+
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setIsOpen(!isOpen)}
+              className="w-full p-2 border border-surface-variant/40 rounded-lg text-left bg-surface flex justify-between items-center text-xs font-semibold"
+            >
+              <span className="truncate">
+                {selected.length === 0 ? 'Todos los barrios' : `${selected.length} seleccionados`}
+              </span>
+              <span className="material-symbols-outlined text-[16px] text-gray-500">
+                {isOpen ? 'expand_less' : 'expand_more'}
+              </span>
+            </button>
+
+            {isOpen && (
+              <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-xl z-50 p-2 text-xs">
+                {/* Zone selector */}
+                <div className="flex gap-1 mb-2 overflow-x-auto pb-1 border-b">
+                  {Object.keys(catalog).map(z => (
+                    <button
+                      key={z}
+                      type="button"
+                      onClick={() => setSelectedZone(z)}
+                      className={`px-2 py-1 rounded text-[11px] font-bold whitespace-nowrap transition-colors ${selectedZone === z ? 'bg-primary text-white' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'}`}
+                    >
+                      {z}
+                    </button>
+                  ))}
+                </div>
+
+                <input
+                  type="text"
+                  placeholder="Filtrar barrio..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full p-1.5 border rounded-md mb-2 text-xs bg-gray-50 focus:outline-none focus:ring-1 focus:ring-secondary-container"
+                />
+
+                <div className="max-h-48 overflow-y-auto space-y-1">
+                  {filtered.map(n => (
+                    <label key={n} className="flex items-center gap-2 p-1 hover:bg-gray-50 rounded cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={selected.includes(n)}
+                        onChange={() => toggleNeighborhood(n)}
+                        className="rounded text-primary cursor-pointer"
+                      />
+                      <span>{n}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       );
     }
@@ -960,309 +1499,13 @@
         if (diffDays < 30) return `Publicado hace ${diffDays} días`;
         const months = Math.floor(diffDays / 30);
         return `Publicado hace ${months} ${months === 1 ? 'mes' : 'meses'}`;
-      } catch (e) {
+      } catch {
         return null;
       }
     }
 
-    function PropertyItem({ property, isSelected, onSelect, onToggleFavorite, onToggleDiscard, onSaveNotes }) {
-      const [showDups, setShowDups] = useState(false);
-      const [isEditingNote, setIsEditingNote] = useState(false);
-      const [noteText, setNoteText] = useState(property.user_notes || '');
-
-      const portalBadges = {
-        mercadolibre: 'bg-amber-100 text-amber-900 border-amber-300',
-        zonaprop: 'bg-fuchsia-100 text-fuchsia-900 border-fuchsia-300',
-        argenprop: 'bg-blue-100 text-blue-900 border-blue-300',
-        remax: 'bg-red-100 text-red-900 border-red-300',
-        cabaprop: 'bg-indigo-100 text-indigo-900 border-indigo-300',
-        properati: 'bg-teal-100 text-teal-900 border-teal-300',
-        mudafy: 'bg-emerald-100 text-emerald-900 border-emerald-300'
-      };
-
-      const portalDisplayNames = {
-        mercadolibre: 'Mercado Libre',
-        zonaprop: 'Zonaprop',
-        argenprop: 'Argenprop',
-        remax: 'RE/MAX',
-        cabaprop: 'CabaProp',
-        properati: 'Properati',
-        mudafy: 'Mudafy'
-      };
-
-      const defaultImg = 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80';
-      const displayImg = (property.images && property.images.length > 0) ? property.images[0] : defaultImg;
-      const dups = property.duplicates || [];
-      const daysText = formatDaysPublished(property.publication_date || property.scraped_at);
-
-      return (
-        <div
-          onClick={() => onSelect && onSelect(property.id)}
-          className={'bg-white rounded-lg border shadow-xs overflow-hidden flex flex-col md:flex-row hover:shadow-md transition-all cursor-pointer ' + (isSelected ? 'border-blue-600 ring-2 ring-blue-200' : 'border-gray-200')}
-        >
-          <div className="relative md:w-60 h-44 md:h-auto bg-gray-100 flex-shrink-0">
-            <img src={displayImg} alt={property.title} className="w-full h-full object-cover" />
-            <div className="absolute top-2 left-2 flex flex-col gap-1">
-              <span className={'text-[10px] font-bold px-2 py-0.5 rounded border ' + (portalBadges[property.portal] || 'bg-gray-100')}>
-                {portalDisplayNames[property.portal] || property.portal}
-              </span>
-              <span className="text-[10px] font-bold uppercase bg-black/70 text-white px-1.5 py-0.5 rounded">
-                {property.property_type}
-              </span>
-            </div>
-            <button
-              onClick={() => onToggleFavorite(property.id)}
-              className="absolute top-2 right-2 p-1.5 bg-white/90 rounded-full shadow hover:scale-110"
-            >
-              {property.is_favorite ? '⭐' : '🤍'}
-            </button>
-            {property.price_per_m2 && (
-              <div className="absolute bottom-2 left-2 bg-slate-900/80 text-white text-[11px] font-semibold px-2 py-0.5 rounded">
-                USD {Math.round(property.price_per_m2).toLocaleString()}/m²
-              </div>
-            )}
-          </div>
-
-          <div className="p-4 flex-1 flex flex-col justify-between text-xs">
-            <div>
-              <div className="flex justify-between items-start">
-                <div>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-2xl font-black text-gray-900">
-                      USD {property.price_usd?.toLocaleString()}
-                    </span>
-                    {daysText && (
-                      <span className="text-[11px] font-medium bg-emerald-50 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded">
-                        ⏱️ {daysText}
-                      </span>
-                    )}
-                  </div>
-                  <div className="font-semibold text-gray-700 mt-0.5">
-                    📍 {property.neighborhood}, {property.zone} {property.address && '· ' + property.address}
-                  </div>
-                </div>
-              </div>
-
-              <h3 className="font-medium text-gray-800 line-clamp-1 mt-1 text-sm">{property.title}</h3>
-
-              <div className="flex flex-wrap items-center gap-2 mt-3 text-gray-600">
-                {property.total_area_m2 && (
-                  <span className="bg-gray-100 px-2 py-1 rounded" title="Superficie Total">
-                    📐 <strong>{Math.round(property.total_area_m2)}</strong> m² tot.
-                  </span>
-                )}
-                {property.covered_area_m2 && property.covered_area_m2 !== property.total_area_m2 && (
-                  <span className="bg-blue-50 text-blue-900 border border-blue-100 px-2 py-1 rounded" title="Superficie Cubierta">
-                    🏠 <strong>{Math.round(property.covered_area_m2)}</strong> m² cub.
-                  </span>
-                )}
-                {property.bedrooms !== null && <span className="bg-gray-100 px-2 py-1 rounded">🛏️ <strong>{property.bedrooms}</strong> dorm.</span>}
-                {property.bathrooms !== null && <span className="bg-gray-100 px-2 py-1 rounded">🚿 <strong>{property.bathrooms}</strong> baños</span>}
-                {property.antiquity && (
-                  <span className="bg-purple-50 text-purple-900 border border-purple-200 px-2 py-1 rounded font-medium" title="Antigüedad">
-                    🏛️ {property.antiquity}
-                  </span>
-                )}
-                {property.disposition && (
-                  <span className="bg-amber-50 text-amber-900 border border-amber-200 px-2 py-1 rounded font-medium" title="Disposición">
-                    🏢 {property.disposition}
-                  </span>
-                )}
-                {property.orientation && (
-                  <span className="bg-slate-100 text-slate-700 px-2 py-1 rounded text-[11px]" title="Orientación">
-                    🧭 {property.orientation}
-                  </span>
-                )}
-                {property.seller_name && <span className="text-gray-500 ml-auto">🏢 {property.seller_name}</span>}
-              </div>
-
-              <div className="mt-2">
-                {isEditingNote ? (
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={noteText}
-                      onChange={(e) => setNoteText(e.target.value)}
-                      placeholder="Agregar nota..."
-                      className="w-full p-1 border rounded text-xs"
-                    />
-                    <button onClick={() => { onSaveNotes(property.id, noteText); setIsEditingNote(false); }} className="bg-blue-600 text-white px-2 py-0.5 rounded">
-                      Guardar
-                    </button>
-                  </div>
-                ) : (
-                  <div className="flex justify-between items-center">
-                    {property.user_notes ? (
-                      <span className="bg-amber-50 text-amber-900 border border-amber-200 px-2 py-0.5 rounded italic">
-                        Nota: {property.user_notes}
-                      </span>
-                    ) : <span />}
-                    <button onClick={() => setIsEditingNote(true)} className="text-gray-400 hover:text-blue-600 ml-auto">
-                      {property.user_notes ? '✏️ Editar nota' : '+ Agregar nota'}
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="mt-3 pt-2 border-t flex justify-between items-center">
-              {dups.length > 1 ? (
-                <button
-                  onClick={() => setShowDups(!showDups)}
-                  className="bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 px-2.5 py-1 rounded font-bold flex items-center gap-1"
-                >
-                  {dups.length} portales detectados {showDups ? '▲' : '▼'}
-                </button>
-              ) : (
-                <span className="text-gray-400 text-[11px]">Publicación única</span>
-              )}
-
-              <div className="flex items-center gap-2">
-                <button onClick={() => onToggleDiscard(property.id)} className="p-1 text-gray-400 hover:text-rose-600" title="Descartar">
-                  🗑️
-                </button>
-                <a
-                  href={property.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-3 py-1.5 rounded shadow-xs flex items-center gap-1"
-                >
-                  Ver en portal ↗
-                </a>
-              </div>
-            </div>
-
-            {dups.length > 1 && showDups && (
-              <div className="mt-3 p-2 bg-amber-50 rounded border border-amber-200 space-y-1">
-                <div className="font-bold text-amber-950">Publicaciones detectadas para este inmueble:</div>
-                {dups.map((d, i) => (
-                  <div key={i} className="flex justify-between items-center bg-white p-1.5 rounded border border-amber-200">
-                    <span className="font-bold uppercase text-[10px]">{d.portal}</span>
-                    <span className="font-bold">USD {d.price_usd?.toLocaleString()}</span>
-                    <span className="text-gray-500 truncate max-w-[120px]">{d.seller_name}</span>
-                    <a href={d.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 font-bold hover:underline">
-                      Abrir enlace ↗
-                    </a>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      );
-    }
-
-    function ScrapeModalComponent({ isOpen, onClose, onCompleted }) {
-      const [portal, setPortal] = useState('all');
-      const [jobs, setJobs] = useState([]);
-      const [msg, setMsg] = useState(null);
-      const [isBusy, setIsBusy] = useState(false);
-
-      const fetchJobs = () => {
-        axios.get('/api/scrape/jobs')
-          .then(res => setJobs(res.data))
-          .catch(console.error);
-      };
-
-      useEffect(() => {
-        fetchJobs();
-        const interval = setInterval(fetchJobs, 2000);
-        return () => clearInterval(interval);
-      }, []);
-
-      const startScrape = async () => {
-        setIsBusy(true);
-        setMsg('Iniciando escaneo en segundo plano...');
-        try {
-          await axios.post('/api/scrape/start', { portal });
-          fetchJobs();
-          setTimeout(() => {
-            fetchJobs();
-            onCompleted();
-            setIsBusy(false);
-          }, 3000);
-        } catch (err) {
-          setMsg('Error al iniciar escaneo');
-          setIsBusy(false);
-        }
-      };
-
-      const runDedup = async () => {
-        try {
-          const res = await axios.post('/api/scrape/deduplicate');
-          setMsg(res.data.message);
-          onCompleted();
-        } catch (err) {
-          setMsg('Error al ejecutar deduplicación');
-        }
-      };
-
-      return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-5 space-y-4">
-            <div className="flex justify-between items-center border-b pb-2">
-              <h2 className="font-bold text-base text-gray-900">Escanear y Actualizar Portales</h2>
-              <button onClick={onClose} className="text-gray-500 font-bold text-lg">×</button>
-            </div>
-
-            {msg && <div className="p-2 bg-blue-50 text-blue-800 text-xs rounded border border-blue-200">{msg}</div>}
-
-            <div>
-              <label className="block text-xs font-bold text-gray-700 mb-1">Seleccionar Portal</label>
-              <select value={portal} onChange={(e) => setPortal(e.target.value)} className="w-full text-xs border rounded p-2">
-                <option value="all">Todos los Portales (Mercado Libre, Zonaprop, Argenprop, Mudafy)</option>
-                <option value="mercadolibre">Mercado Libre</option>
-                <option value="zonaprop">Zonaprop</option>
-                <option value="argenprop">Argenprop</option>
-                <option value="mudafy">Mudafy</option>
-              </select>
-            </div>
-
-            <div className="flex gap-2">
-              <button
-                onClick={startScrape}
-                disabled={isBusy}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded text-xs disabled:opacity-50"
-              >
-                {isBusy ? '⏳ Escaneando...' : '▶ Iniciar Escaneo'}
-              </button>
-              <button
-                onClick={runDedup}
-                className="bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 px-3 rounded text-xs"
-              >
-                Detectar Duplicados
-              </button>
-            </div>
-
-            <div className="pt-2 border-t">
-              <div className="flex justify-between items-center mb-2">
-                <h4 className="text-xs font-bold text-gray-700">Historial de Escaneos</h4>
-                <button onClick={fetchJobs} className="text-[11px] text-blue-600 hover:underline">Actualizar</button>
-              </div>
-              <div className="max-h-40 overflow-y-auto space-y-1.5 text-xs">
-                {jobs.map(j => (
-                  <div key={j.id} className="p-2 bg-gray-50 rounded border flex justify-between items-center">
-                    <div>
-                      <span className="font-bold capitalize">{j.portal}</span>
-                      <div className="text-gray-500 text-[11px]">{j.message || j.status}</div>
-                    </div>
-                    <span className={'px-2 py-0.5 rounded text-[10px] font-bold ' + (j.status === 'completed' ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800 animate-pulse')}>
-                      {j.status === 'completed' ? '✓ Listo' : '⏳ ' + j.status}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex justify-end pt-2 border-t">
-              <button onClick={onClose} className="bg-gray-200 px-4 py-1.5 rounded text-xs font-semibold">Cerrar</button>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
   </script>
 </body>
 </html>
