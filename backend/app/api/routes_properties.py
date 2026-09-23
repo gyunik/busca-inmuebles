@@ -17,9 +17,13 @@ class NoteUpdate(BaseModel):
 @router.get("")
 def get_properties(
     property_types: Optional[List[str]] = Query(None),
+    property_type: Optional[str] = None,
     neighborhoods: Optional[List[str]] = Query(None),
+    neighborhood: Optional[str] = None,
     zones: Optional[List[str]] = Query(None),
+    zone: Optional[str] = None,
     portals: Optional[List[str]] = Query(None),
+    portal: Optional[str] = None,
     min_price: Optional[float] = None,
     max_price: Optional[float] = None,
     min_area: Optional[float] = None,
@@ -30,6 +34,7 @@ def get_properties(
     days_ago: Optional[int] = None,
     date_filter: Optional[str] = None,
     search_query: Optional[str] = None,
+    search: Optional[str] = None,
     only_favorites: bool = False,
     include_discarded: bool = False,
     group_duplicates: bool = False,
@@ -39,6 +44,18 @@ def get_properties(
     db: Session = Depends(get_db)
 ):
     query = db.query(Property)
+
+    # Normalize singular vs plural params
+    if not property_types and property_type:
+        property_types = [property_type]
+    if not neighborhoods and neighborhood:
+        neighborhoods = [neighborhood]
+    if not zones and zone:
+        zones = [zone]
+    if not portals and portal:
+        portals = [portal]
+    if not search_query and search:
+        search_query = search
 
     # Discarded filter
     if not include_discarded:
@@ -50,21 +67,27 @@ def get_properties(
 
     # Property types
     if property_types:
-        cleaned_types = [t.lower() for t in property_types]
-        query = query.filter(Property.property_type.in_(cleaned_types))
+        cleaned_types = [t.lower() for t in property_types if t]
+        if cleaned_types:
+            query = query.filter(Property.property_type.in_(cleaned_types))
 
     # Portals
     if portals:
-        cleaned_portals = [p.lower() for p in portals]
-        query = query.filter(Property.portal.in_(cleaned_portals))
+        cleaned_portals = [p.lower() for p in portals if p]
+        if cleaned_portals:
+            query = query.filter(Property.portal.in_(cleaned_portals))
 
     # Neighborhoods (Multi-select)
     if neighborhoods:
-        query = query.filter(Property.neighborhood.in_(neighborhoods))
+        cleaned_neighs = [n for n in neighborhoods if n]
+        if cleaned_neighs:
+            query = query.filter(Property.neighborhood.in_(cleaned_neighs))
 
     # Zones
     if zones:
-        query = query.filter(Property.zone.in_(zones))
+        cleaned_zones = [z for z in zones if z]
+        if cleaned_zones:
+            query = query.filter(Property.zone.in_(cleaned_zones))
 
     # Price range
     if min_price is not None:
@@ -199,10 +222,13 @@ def get_properties(
         }
 
 @router.get("/catalog/locations")
+@router.get("/locations-catalog")
+@router.get("/catalog")
 def get_locations():
     return CATALOG_BY_ZONE
 
 @router.get("/stats/summary")
+@router.get("/stats")
 def get_stats(db: Session = Depends(get_db)):
     total = db.query(Property).filter(Property.is_discarded == False).count()
     favorites = db.query(Property).filter(Property.is_favorite == True).count()
