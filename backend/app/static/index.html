@@ -460,10 +460,29 @@
         });
       };
 
+      const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
+      const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+
+      const activeFiltersCount = useMemo(() => {
+        let count = 0;
+        if (filters.neighborhoods.length > 0) count += filters.neighborhoods.length;
+        if (filters.property_types.length > 0) count += filters.property_types.length;
+        if (filters.portals.length > 0) count += filters.portals.length;
+        if (filters.min_price || filters.max_price) count += 1;
+        if (filters.min_area || filters.max_area) count += 1;
+        if (filters.min_bedrooms !== null) count += 1;
+        if (filters.min_bathrooms !== null) count += 1;
+        if (filters.date_filter) count += 1;
+        if (filters.only_favorites) count += 1;
+        return count;
+      }, [filters]);
+
       return (
-        <div className="min-h-screen bg-background text-on-surface flex flex-col font-body-md">
-          {/* Top Fixed Header */}
-          <header class="fixed top-0 left-0 right-0 z-50 bg-surface-container-lowest/95 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+        <div className="min-h-screen bg-surface font-body-md text-on-surface antialiased flex flex-col pb-20 lg:pb-0">
+          {/* ========================================================================= */}
+          {/* DESKTOP HEADER (lg and up) */}
+          {/* ========================================================================= */}
+          <header class="hidden lg:block fixed top-0 left-0 right-0 z-50 bg-surface-container-lowest/95 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
             <div class="h-28 w-full flex flex-col">
               {/* Tier 1 Header */}
               <div class="h-16 px-margin flex items-center justify-between gap-gutter">
@@ -481,11 +500,11 @@
                     </div>
                   </div>
 
-                  <div class="h-6 w-[1px] bg-surface-variant hidden lg:block"></div>
+                  <div class="h-6 w-[1px] bg-surface-variant"></div>
 
                   <button 
                     onClick={() => setFilters(prev => ({ ...prev, zones: prev.zones.length > 0 ? [] : ['CABA'], page: 1 }))}
-                    class="hidden sm:flex items-center gap-space-xs bg-surface-container-low hover:bg-surface-container px-3 py-1.5 rounded-full text-on-surface transition-colors"
+                    class="flex items-center gap-space-xs bg-surface-container-low hover:bg-surface-container px-3 py-1.5 rounded-full text-on-surface transition-colors"
                   >
                     <span class="material-symbols-outlined text-secondary text-[16px]">near_me</span>
                     <span class="font-label-md text-label-md">{filters.zones.length > 0 ? filters.zones.join(', ') : 'CABA & GBA'}</span>
@@ -518,7 +537,7 @@
                   <button 
                     onClick={handleTriggerScraper}
                     disabled={isScraping}
-                    class="hidden xl:flex items-center gap-space-xs px-3 py-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface transition-colors"
+                    class="flex items-center gap-space-xs px-3 py-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface transition-colors"
                     title="Ejecutar escaneo de portales en segundo plano"
                   >
                     <span class={`material-symbols-outlined text-secondary text-[18px] ${isScraping ? 'animate-spin' : ''}`}>sync</span>
@@ -528,7 +547,7 @@
 
                   <button 
                     onClick={handleExport}
-                    class="hidden md:flex items-center gap-space-xs px-3 py-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface transition-colors"
+                    class="flex items-center gap-space-xs px-3 py-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface transition-colors"
                     title="Exportar base de datos a archivo Excel"
                   >
                     <span class="material-symbols-outlined text-secondary text-[18px]">table_view</span>
@@ -581,7 +600,7 @@
                   </div>
                 </div>
 
-                <nav class="hidden lg:flex items-center gap-1 p-0.5 bg-surface-container rounded-lg">
+                <nav class="flex items-center gap-1 p-0.5 bg-surface-container rounded-lg">
                   <button 
                     onClick={() => setActiveTab('explorador')}
                     class={`px-3 py-1 font-label-md text-label-md transition-colors ${activeTab === 'explorador' ? 'bg-surface-container-lowest text-on-surface font-bold rounded-md shadow-[0_1px_4px_rgba(0,0,0,0.04)]' : 'text-on-surface-variant hover:text-on-surface'}`}
@@ -605,21 +624,81 @@
             </div>
           </header>
 
+          {/* ========================================================================= */}
+          {/* MOBILE HEADER (under lg) */}
+          {/* ========================================================================= */}
+          <header class="block lg:hidden fixed top-0 w-full z-50 pt-safe bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(11,28,48,0.04)]">
+            <div class="h-16 px-gutter-mobile flex items-center justify-between gap-space-sm">
+              <div class="flex items-center gap-space-xs cursor-pointer" onClick={clearAllFilters}>
+                <div class="flex items-center tracking-tight font-headline-md text-headline-md text-on-surface">
+                  <span class="text-primary-container font-extrabold">Busca</span>
+                  <span class="text-secondary font-bold">Inmuebles</span>
+                </div>
+                <span class="inline-flex items-center px-1.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-[10px] uppercase font-extrabold">
+                  AR
+                </span>
+              </div>
+
+              <div class="flex items-center gap-1">
+                <button 
+                  onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
+                  class="flex items-center justify-center w-10 h-10 rounded-full text-on-surface-variant hover:text-on-surface transition-colors"
+                >
+                  <span class="material-symbols-outlined text-[22px]">search</span>
+                </button>
+                <button 
+                  onClick={handleTriggerScraper}
+                  class="relative flex items-center justify-center w-10 h-10 rounded-full text-on-surface-variant hover:text-on-surface transition-colors"
+                  title="Escanear"
+                >
+                  <span class={`material-symbols-outlined text-[22px] ${isScraping ? 'animate-spin text-secondary' : ''}`}>sync</span>
+                  <span class="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-secondary-container"></span>
+                </button>
+                <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center ml-1">
+                  <span class="material-symbols-outlined text-on-primary text-[18px]">person</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Expandable Search Input on Mobile */}
+            {isMobileSearchOpen && (
+              <div class="px-3 pb-2.5 pt-0">
+                <div class="relative flex items-center w-full">
+                  <span class="material-symbols-outlined absolute left-3 text-on-surface-variant text-[18px]">search</span>
+                  <input 
+                    class="w-full pl-9 pr-8 py-2 bg-surface rounded-full text-on-surface font-body-sm text-body-sm placeholder:text-on-surface-variant focus:outline-none focus:ring-2 focus:ring-secondary-container border border-surface-variant/40"
+                    placeholder="Buscar por barrio, calle, USD..."
+                    type="text"
+                    value={filters.search}
+                    autoFocus
+                    onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value, page: 1 }))}
+                  />
+                  {filters.search && (
+                    <span onClick={() => setFilters(prev => ({ ...prev, search: '', page: 1 }))} class="material-symbols-outlined absolute right-3 text-gray-400 cursor-pointer text-[18px]">close</span>
+                  )}
+                </div>
+              </div>
+            )}
+          </header>
+
           {/* Scrape Toast Notification */}
           {scrapeMessage && (
-            <div className="fixed bottom-4 right-4 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-2 text-xs font-semibold animate-bounce">
+            <div className="fixed bottom-20 lg:bottom-4 right-4 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-2 text-xs font-semibold animate-bounce">
               <span className="material-symbols-outlined text-secondary-container text-[18px]">info</span>
               <span>{scrapeMessage}</span>
             </div>
           )}
 
-          {/* Layout Container */}
-          <div className="flex flex-1 w-full pt-28">
-            {/* Sidebar Filters */}
-            <aside class="w-80 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 overflow-y-auto p-space-md border-r border-surface-variant/30 flex-shrink-0">
+          {/* ========================================================================= */}
+          {/* MAIN CONTAINER (Responsive Layout) */}
+          {/* ========================================================================= */}
+          <div className="flex flex-1 w-full pt-16 lg:pt-28">
+            
+            {/* Desktop Sidebar (Hidden on mobile) */}
+            <aside class="hidden lg:block w-80 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 overflow-y-auto p-space-md border-r border-surface-variant/30 flex-shrink-0">
               <div class="space-y-4">
                 {/* Active Filters Card */}
-                {(filters.neighborhoods.length > 0 || filters.property_types.length > 0 || filters.portals.length > 0 || filters.min_price || filters.max_price || filters.min_area || filters.max_area || filters.min_bedrooms !== null || filters.min_bathrooms !== null || filters.date_filter) && (
+                {activeFiltersCount > 0 && (
                   <div class="p-space-sm rounded-xl bg-surface-container-low flex flex-col gap-space-xs">
                     <div class="flex items-center justify-between">
                       <div class="flex items-center gap-1.5">
@@ -710,7 +789,7 @@
                   </div>
                 </div>
 
-                {/* 1. Property Type (TIPO DE PROPIEDAD) */}
+                {/* Property Type */}
                 <div class="space-y-1">
                   <span class="font-bold text-xs text-on-surface uppercase tracking-wider text-slate-700">Tipo de Propiedad</span>
                   <div class="space-y-1 font-body-sm text-body-sm text-on-surface">
@@ -738,14 +817,14 @@
                   </div>
                 </div>
 
-                {/* 2. Neighborhood Selector (BARRIOS) */}
+                {/* Neighborhood Selector */}
                 <NeighborhoodSelector
                   catalog={catalog}
                   selected={filters.neighborhoods}
                   onChange={(neighs) => setFilters(prev => ({ ...prev, neighborhoods: neighs, page: 1 }))}
                 />
 
-                {/* 3. Price (PRECIO USD) */}
+                {/* Price (PRECIO USD) */}
                 <div class="space-y-1">
                   <span class="font-bold text-xs text-on-surface uppercase tracking-wider text-slate-700">Precio (USD)</span>
                   <div class="flex items-center gap-2">
@@ -771,7 +850,7 @@
                   </div>
                 </div>
 
-                {/* 4. Superficie Total (SUPERFICIE TOTAL M²) */}
+                {/* Superficie Total */}
                 <div class="space-y-1">
                   <span class="font-bold text-xs text-on-surface uppercase tracking-wider text-slate-700">Superficie Total (m²)</span>
                   <div class="flex items-center gap-2">
@@ -797,7 +876,7 @@
                   </div>
                 </div>
 
-                {/* 5. Dormitorios (DORMITORIOS 1, 2, 3, 4+) */}
+                {/* Dormitorios */}
                 <div class="space-y-1">
                   <span class="font-bold text-xs text-on-surface uppercase tracking-wider text-slate-700">Dormitorios</span>
                   <div class="grid grid-cols-4 gap-1.5">
@@ -822,7 +901,7 @@
                   </div>
                 </div>
 
-                {/* 6. Baños (BAÑOS 1+, 2+, 3+) */}
+                {/* Baños */}
                 <div class="space-y-1">
                   <span class="font-bold text-xs text-on-surface uppercase tracking-wider text-slate-700">Baños</span>
                   <div class="grid grid-cols-3 gap-1.5">
@@ -846,7 +925,7 @@
                   </div>
                 </div>
 
-                {/* 7. Fecha de Publicación (FECHA DE PUBLICACIÓN) */}
+                {/* Fecha de Publicación */}
                 <div class="space-y-1">
                   <span class="font-bold text-xs text-on-surface uppercase tracking-wider text-slate-700">Fecha de Publicación</span>
                   <div class="relative">
@@ -866,7 +945,7 @@
                   </div>
                 </div>
 
-                {/* 8. Portales Checklist (PORTALES) */}
+                {/* Portales */}
                 <div class="space-y-1">
                   <span class="font-bold text-xs text-on-surface uppercase tracking-wider text-slate-700">Portales</span>
                   <div class="space-y-1 font-body-sm text-body-sm text-on-surface">
@@ -910,71 +989,163 @@
             </aside>
 
             {/* Main Content Area */}
-            <main class="flex-1 w-full px-margin min-h-screen bg-background pb-16 overflow-y-auto">
-              {/* Top Stats & Filter Summary Bar */}
-              <section class="w-full mb-space-md mt-6">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-space-sm bg-surface-container-lowest p-space-md rounded-xl shadow-sm border border-surface-variant/30">
-                  <div class="flex flex-col sm:flex-row sm:items-center gap-space-md">
-                    <div class="flex items-center gap-2">
-                      <span class="w-2.5 h-2.5 rounded-full bg-secondary-container animate-pulse"></span>
-                      <span class="font-headline-md text-headline-md text-on-surface font-extrabold">Inmuebles en Venta</span>
+            <main class="flex-1 w-full px-3 sm:px-margin min-h-screen bg-surface pb-24 overflow-y-auto">
+              
+              {/* ========================================================================= */}
+              {/* MOBILE FAST INTERACTIVE ACTIONS STRIP (Zonaprop-inspired toolbar) */}
+              {/* ========================================================================= */}
+              <div class="block lg:hidden sticky top-16 z-40 bg-surface-container-lowest shadow-sm -mx-3 px-3 py-2.5 flex flex-col gap-2 mb-3">
+                {/* Top Action Bar */}
+                <div class="flex items-center justify-between gap-space-xs">
+                  <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+                    {/* Venta / Alquiler Compact Toggle */}
+                    <div class="flex bg-surface-container-high rounded-full p-0.5">
+                      <button 
+                        onClick={() => setFilters(prev => ({ ...prev, operation_type: 'venta', page: 1 }))}
+                        class={`px-3 py-1 rounded-full font-label-md text-label-md transition-all ${filters.operation_type === 'venta' ? 'bg-primary-container text-on-primary shadow-sm font-bold' : 'text-on-surface-variant hover:text-on-surface'}`} 
+                        type="button"
+                      >
+                        Venta
+                      </button>
+                      <button 
+                        onClick={() => setFilters(prev => ({ ...prev, operation_type: 'alquiler', page: 1 }))}
+                        class={`px-3 py-1 rounded-full font-label-md text-label-md transition-all ${filters.operation_type === 'alquiler' ? 'bg-primary-container text-on-primary shadow-sm font-bold' : 'text-on-surface-variant hover:text-on-surface'}`} 
+                        type="button"
+                      >
+                        Alquiler
+                      </button>
                     </div>
-                    <div class="flex items-center gap-2">
-                      <span class="px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface font-metric-mono text-metric-mono">
-                        {total.toLocaleString()} resultados encontrados
+
+                    <button 
+                      onClick={() => setViewMode(viewMode === 'map' ? 'split' : 'map')}
+                      class={`flex items-center gap-1 px-3 py-1.5 rounded-full font-label-md text-label-md active:scale-95 transition-all ${viewMode === 'map' ? 'bg-primary text-white font-bold' : 'bg-surface-container-low text-on-surface'}`} 
+                      type="button"
+                    >
+                      <span class="material-symbols-outlined text-[17px] text-secondary">map</span>
+                      <span>{viewMode === 'map' ? 'Listado' : 'Mapa'}</span>
+                    </button>
+
+                    <button 
+                      onClick={handleTriggerScraper}
+                      class="flex items-center gap-1 px-3 py-1.5 rounded-full bg-surface-container-low text-on-surface font-label-md text-label-md active:scale-95 transition-all" 
+                      type="button"
+                    >
+                      <span class="material-symbols-outlined text-[17px] text-on-surface-variant">notifications_active</span>
+                      <span>Alerta</span>
+                    </button>
+                  </div>
+
+                  {/* Filter Drawer Trigger Button */}
+                  <button 
+                    onClick={() => setIsMobileFilterOpen(true)}
+                    class="relative flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-secondary-container text-on-secondary-container font-label-md text-label-md shadow-sm active:scale-95 transition-transform flex-shrink-0 font-bold" 
+                    type="button"
+                  >
+                    <span class="material-symbols-outlined text-[18px]">tune</span>
+                    <span>Filtros</span>
+                    {activeFiltersCount > 0 && (
+                      <span class="flex items-center justify-center w-4 h-4 rounded-full bg-on-secondary-container text-surface-container-lowest font-label-sm text-[10px] font-extrabold ml-0.5">
+                        {activeFiltersCount}
                       </span>
-                      <span class="hidden sm:inline text-on-surface-variant font-label-sm text-label-sm">• CABA & GBA</span>
+                    )}
+                  </button>
+                </div>
+
+                {/* Quick Typology Horizontal Scroll */}
+                <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+                  <button 
+                    onClick={() => setFilters(prev => ({ ...prev, property_types: [], page: 1 }))}
+                    class={`px-3 py-1 rounded-full font-label-sm text-label-sm flex-shrink-0 transition-colors ${filters.property_types.length === 0 ? 'bg-primary text-on-primary font-bold' : 'bg-surface-container text-on-surface-variant'}`}
+                  >
+                    Todos
+                  </button>
+                  <button 
+                    onClick={() => setFilters(prev => ({ ...prev, property_types: prev.property_types.includes('departamento') ? [] : ['departamento'], page: 1 }))}
+                    class={`px-3 py-1 rounded-full font-label-sm text-label-sm flex-shrink-0 transition-colors ${filters.property_types.includes('departamento') ? 'bg-primary text-on-primary font-bold' : 'bg-surface-container text-on-surface-variant'}`}
+                  >
+                    Departamentos ({stats?.by_type?.departamento?.toLocaleString() || '1.454'})
+                  </button>
+                  <button 
+                    onClick={() => setFilters(prev => ({ ...prev, property_types: prev.property_types.includes('ph') ? [] : ['ph'], page: 1 }))}
+                    class={`px-3 py-1 rounded-full font-label-sm text-label-sm flex-shrink-0 transition-colors ${filters.property_types.includes('ph') ? 'bg-primary text-on-primary font-bold' : 'bg-surface-container text-on-surface-variant'}`}
+                  >
+                    PH ({stats?.by_type?.ph?.toLocaleString() || '3.838'})
+                  </button>
+                  <button 
+                    onClick={() => setFilters(prev => ({ ...prev, property_types: prev.property_types.includes('casa') ? [] : ['casa'], page: 1 }))}
+                    class={`px-3 py-1 rounded-full font-label-sm text-label-sm flex-shrink-0 transition-colors ${filters.property_types.includes('casa') ? 'bg-primary text-on-primary font-bold' : 'bg-surface-container text-on-surface-variant'}`}
+                  >
+                    Casas ({stats?.by_type?.casa?.toLocaleString() || '778'})
+                  </button>
+                </div>
+              </div>
+
+              {/* ========================================================================= */}
+              {/* MOBILE DEDUPLICATION & METRICS SWIPE CARD (under lg) */}
+              {/* ========================================================================= */}
+              <div class="block lg:hidden bg-surface-container-lowest rounded-xl p-3 shadow-sm flex flex-col gap-2.5 mb-3 border border-surface-variant/30">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-lg bg-secondary-fixed flex items-center justify-center text-on-secondary-fixed">
+                      <span class="material-symbols-outlined text-[18px]">bolt</span>
+                    </div>
+                    <div>
+                      <div class="flex items-center gap-1.5">
+                        <span class="font-label-md text-label-md text-on-surface font-bold">Detección de Duplicados</span>
+                        <span class="inline-flex items-center px-1.5 py-0.2 rounded bg-surface-container text-on-surface-variant font-label-sm text-[9px] uppercase tracking-wider font-extrabold">
+                          {filters.group_duplicates ? 'Activa' : 'Inactiva'}
+                        </span>
+                      </div>
+                      <p class="font-body-sm text-body-sm text-on-surface-variant">5 portales auditados en vivo</p>
                     </div>
                   </div>
 
-                  <div class="flex flex-wrap items-center gap-space-sm">
-                    {/* View Switchers */}
-                    <div class="flex items-center bg-surface-container p-0.5 rounded-lg border border-surface-variant/40">
-                      <button 
-                        onClick={() => setViewMode('list')}
-                        class={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-label-md text-label-md transition-all ${viewMode === 'list' ? 'bg-surface-container-lowest text-on-surface font-bold shadow-sm' : 'text-on-surface-variant hover:text-on-surface'}`}
-                      >
-                        <span class="material-symbols-outlined text-[16px] text-secondary">view_agenda</span>
-                        <span>Listado</span>
-                      </button>
-                      <button 
-                        onClick={() => setViewMode('split')}
-                        class={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-label-md text-label-md transition-all ${viewMode === 'split' ? 'bg-surface-container-lowest text-on-surface font-bold shadow-sm' : 'text-on-surface-variant hover:text-on-surface'}`}
-                      >
-                        <span class="material-symbols-outlined text-[16px]">vertical_split</span>
-                        <span>Dividido</span>
-                      </button>
-                      <button 
-                        onClick={() => setViewMode('map')}
-                        class={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-label-md text-label-md transition-all ${viewMode === 'map' ? 'bg-surface-container-lowest text-on-surface font-bold shadow-sm' : 'text-on-surface-variant hover:text-on-surface'}`}
-                      >
-                        <span class="material-symbols-outlined text-[16px]">map</span>
-                        <span>Mapa</span>
-                      </button>
-                    </div>
+                  {/* Custom Tactile Switch */}
+                  <label class="relative inline-flex items-center cursor-pointer">
+                    <input 
+                      type="checkbox"
+                      checked={filters.group_duplicates}
+                      onChange={(e) => setFilters(prev => ({ ...prev, group_duplicates: e.target.checked, page: 1 }))}
+                      class="sr-only peer"
+                    />
+                    <div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary-container"></div>
+                  </label>
+                </div>
 
-                    {/* Sort Select */}
-                    <div class="relative inline-flex items-center">
-                      <span class="material-symbols-outlined absolute left-2.5 text-on-surface-variant text-[18px] pointer-events-none">swap_vert</span>
-                      <select 
-                        value={filters.sort_by}
-                        onChange={(e) => setFilters(prev => ({ ...prev, sort_by: e.target.value, page: 1 }))}
-                        class="pl-8 pr-8 py-1.5 bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md rounded-lg appearance-none cursor-pointer focus:outline-none border border-surface-variant/40"
-                      >
-                        <option value="newest">Más recientes</option>
-                        <option value="price_asc">Menor precio</option>
-                        <option value="price_desc">Mayor precio</option>
-                        <option value="m2_asc">Menor USD/m²</option>
-                        <option value="price_diff">Mayor diferencia de portales</option>
-                      </select>
-                      <span class="material-symbols-outlined absolute right-2 text-on-surface-variant text-[16px] pointer-events-none">expand_more</span>
+                {/* Quick Metrics Swipe Strip */}
+                <div class="flex gap-2 overflow-x-auto no-scrollbar pt-1">
+                  <div class="min-w-[140px] flex-1 bg-surface-container-low rounded-lg p-2 flex flex-col justify-between">
+                    <span class="font-body-sm text-[11px] text-on-surface-variant">Promedio CABA</span>
+                    <div class="flex items-baseline gap-1 mt-0.5">
+                      <span class="font-label-md text-label-md text-on-surface font-extrabold">USD 2.298</span>
+                      <span class="font-metric-mono text-[10px] text-secondary font-bold">/m²</span>
                     </div>
+                    <span class="font-label-sm text-[10px] text-on-secondary-container font-semibold mt-0.5">+1.4% este mes</span>
+                  </div>
+
+                  <div class="min-w-[140px] flex-1 bg-surface-container-low rounded-lg p-2 flex flex-col justify-between">
+                    <span class="font-body-sm text-[11px] text-on-surface-variant">Duplicados unificados</span>
+                    <div class="flex items-baseline gap-1 mt-0.5">
+                      <span class="font-label-md text-label-md text-on-surface font-extrabold">1.842</span>
+                      <span class="font-label-sm text-[10px] text-on-surface-variant">avisos</span>
+                    </div>
+                    <span class="font-label-sm text-[10px] text-on-surface-variant font-semibold mt-0.5">36% del total limpio</span>
+                  </div>
+
+                  <div class="min-w-[140px] flex-1 bg-surface-container-low rounded-lg p-2 flex flex-col justify-between">
+                    <span class="font-body-sm text-[11px] text-on-surface-variant">Ahorro máx. cruzado</span>
+                    <div class="flex items-baseline gap-1 mt-0.5">
+                      <span class="font-label-md text-label-md text-secondary font-extrabold">USD 14.000</span>
+                    </div>
+                    <span class="font-label-sm text-[10px] text-on-secondary-fixed-variant font-semibold mt-0.5">Mismo depto en 3 webs</span>
                   </div>
                 </div>
-              </section>
+              </div>
 
-              {/* Market Intelligence KPI Banner */}
-              <section class="w-full mb-space-md grid grid-cols-1 md:grid-cols-4 gap-space-sm">
+              {/* ========================================================================= */}
+              {/* DESKTOP KPI BANNER (lg and up) */}
+              {/* ========================================================================= */}
+              <section class="hidden lg:grid w-full mb-space-md mt-6 grid-cols-4 gap-space-sm">
                 <div class="bg-surface-container-lowest p-space-sm rounded-xl shadow-sm border border-surface-variant/20 flex items-center justify-between">
                   <div class="flex flex-col">
                     <span class="font-label-sm text-label-sm text-on-surface-variant">Promedio USD/m² (CABA)</span>
@@ -1019,14 +1190,72 @@
                   </div>
                   <div class="flex items-baseline justify-between mt-1">
                     <span class="font-headline-md text-headline-md text-on-primary font-bold">5 Portales</span>
-                    <span class="font-label-sm text-label-sm text-surface-dim">Keep-Alive 24/7</span>
+                    <span class="font-label-sm text-label-sm text-surface-dim">6.070 Inmuebles</span>
+                  </div>
+                </div>
+              </section>
+
+              {/* Feed Header / Sorting Bar */}
+              <section class="w-full mb-3 flex items-center justify-between gap-space-sm bg-surface-container-lowest p-3 lg:p-space-md rounded-xl shadow-sm border border-surface-variant/30">
+                <div class="flex flex-col">
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span>
+                    <h1 class="font-label-md text-label-md text-on-surface font-bold">
+                      {total.toLocaleString()} Inmuebles en venta
+                    </h1>
+                  </div>
+                  <p class="font-body-sm text-[11px] text-on-surface-variant">
+                    {filters.neighborhoods.length > 0 ? filters.neighborhoods.join(', ') : 'CABA & GBA'} · Sin avisos duplicados
+                  </p>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  {/* View switcher (Desktop only) */}
+                  <div class="hidden lg:flex items-center bg-surface-container p-0.5 rounded-lg border border-surface-variant/40">
+                    <button 
+                      onClick={() => setViewMode('list')}
+                      class={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-label-md text-label-md transition-all ${viewMode === 'list' ? 'bg-surface-container-lowest text-on-surface font-bold shadow-sm' : 'text-on-surface-variant hover:text-on-surface'}`}
+                    >
+                      <span class="material-symbols-outlined text-[16px] text-secondary">view_agenda</span>
+                      <span>Listado</span>
+                    </button>
+                    <button 
+                      onClick={() => setViewMode('split')}
+                      class={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-label-md text-label-md transition-all ${viewMode === 'split' ? 'bg-surface-container-lowest text-on-surface font-bold shadow-sm' : 'text-on-surface-variant hover:text-on-surface'}`}
+                    >
+                      <span class="material-symbols-outlined text-[16px]">vertical_split</span>
+                      <span>Dividido</span>
+                    </button>
+                    <button 
+                      onClick={() => setViewMode('map')}
+                      class={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-label-md text-label-md transition-all ${viewMode === 'map' ? 'bg-surface-container-lowest text-on-surface font-bold shadow-sm' : 'text-on-surface-variant hover:text-on-surface'}`}
+                    >
+                      <span class="material-symbols-outlined text-[16px]">map</span>
+                      <span>Mapa</span>
+                    </button>
+                  </div>
+
+                  {/* Sort Select */}
+                  <div class="relative inline-flex items-center">
+                    <span class="material-symbols-outlined absolute left-2 text-on-surface-variant text-[16px] pointer-events-none">swap_vert</span>
+                    <select 
+                      value={filters.sort_by}
+                      onChange={(e) => setFilters(prev => ({ ...prev, sort_by: e.target.value, page: 1 }))}
+                      class="pl-7 pr-7 py-1.5 bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-label-sm rounded-lg appearance-none cursor-pointer focus:outline-none border border-surface-variant/40"
+                    >
+                      <option value="newest">Más recientes</option>
+                      <option value="price_asc">Menor precio</option>
+                      <option value="price_desc">Mayor precio</option>
+                      <option value="m2_asc">Menor USD/m²</option>
+                    </select>
+                    <span class="material-symbols-outlined absolute right-1.5 text-on-surface-variant text-[14px] pointer-events-none">expand_more</span>
                   </div>
                 </div>
               </section>
 
               {/* View Layout (List / Split / Map) */}
               {viewMode === 'map' ? (
-                <div className="w-full h-[750px] rounded-xl overflow-hidden shadow-sm border border-surface-variant/30">
+                <div className="w-full h-[600px] lg:h-[750px] rounded-2xl overflow-hidden shadow-sm border border-surface-variant/30 mb-4">
                   <MapView 
                     properties={properties}
                     selectedId={selectedId}
@@ -1035,16 +1264,16 @@
                   />
                 </div>
               ) : viewMode === 'split' ? (
-                <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+                <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 lg:gap-6 items-start">
                   {/* Left Cards (7 Cols) */}
-                  <div className="xl:col-span-7 flex flex-col gap-space-md">
+                  <div className="xl:col-span-7 flex flex-col gap-3 lg:gap-space-md">
                     {loading ? (
-                      <div className="bg-surface-container-lowest p-12 text-center rounded-xl border border-surface-variant/30">
+                      <div className="bg-surface-container-lowest p-12 text-center rounded-2xl border border-surface-variant/30">
                         <span className="material-symbols-outlined text-4xl text-secondary animate-spin">sync</span>
                         <p className="mt-2 font-semibold text-gray-700">Cargando propiedades...</p>
                       </div>
                     ) : properties.length === 0 ? (
-                      <div className="bg-surface-container-lowest p-12 text-center rounded-xl border border-surface-variant/30">
+                      <div className="bg-surface-container-lowest p-12 text-center rounded-2xl border border-surface-variant/30">
                         <span className="material-symbols-outlined text-4xl text-gray-400">search_off</span>
                         <p className="mt-2 font-bold text-gray-700">No se encontraron propiedades con esos filtros.</p>
                       </div>
@@ -1063,8 +1292,8 @@
                     )}
                   </div>
 
-                  {/* Right Map (5 Cols Sticky) */}
-                  <div className="xl:col-span-5 sticky top-32 h-[calc(100vh-160px)] min-h-[500px] rounded-xl overflow-hidden shadow-sm border border-surface-variant/30">
+                  {/* Right Map (5 Cols Sticky Desktop only) */}
+                  <div className="hidden xl:block xl:col-span-5 sticky top-32 h-[calc(100vh-160px)] min-h-[500px] rounded-2xl overflow-hidden shadow-sm border border-surface-variant/30">
                     <MapView 
                       properties={properties}
                       selectedId={selectedId}
@@ -1075,14 +1304,14 @@
                 </div>
               ) : (
                 /* Pure List View */
-                <div className="flex flex-col gap-space-md w-full">
+                <div className="flex flex-col gap-3 lg:gap-space-md w-full">
                   {loading ? (
-                    <div className="bg-surface-container-lowest p-12 text-center rounded-xl border border-surface-variant/30">
+                    <div className="bg-surface-container-lowest p-12 text-center rounded-2xl border border-surface-variant/30">
                       <span className="material-symbols-outlined text-4xl text-secondary animate-spin">sync</span>
                       <p className="mt-2 font-semibold text-gray-700">Cargando propiedades...</p>
                     </div>
                   ) : properties.length === 0 ? (
-                    <div className="bg-surface-container-lowest p-12 text-center rounded-xl border border-surface-variant/30">
+                    <div className="bg-surface-container-lowest p-12 text-center rounded-2xl border border-surface-variant/30">
                       <span className="material-symbols-outlined text-4xl text-gray-400">search_off</span>
                       <p className="mt-2 font-bold text-gray-700">No se encontraron propiedades con esos filtros.</p>
                     </div>
@@ -1103,8 +1332,8 @@
               )}
 
               {/* Pagination Strip */}
-              <section class="w-full mt-space-lg flex flex-col sm:flex-row items-center justify-between gap-space-md p-space-md bg-surface-container-lowest rounded-xl shadow-sm border border-surface-variant/30">
-                <div class="font-body-sm text-body-sm text-on-surface-variant">
+              <section class="w-full mt-4 lg:mt-space-lg flex flex-col sm:flex-row items-center justify-between gap-space-md p-3 lg:p-space-md bg-surface-container-lowest rounded-2xl shadow-sm border border-surface-variant/30">
+                <div class="font-body-sm text-[12px] text-on-surface-variant">
                   Mostrando página <span class="font-bold text-on-surface">{filters.page}</span> de <span class="font-bold text-on-surface">{totalPages}</span> ({total.toLocaleString()} propiedades)
                 </div>
                 
@@ -1140,12 +1369,322 @@
                     <option value="25">25</option>
                     <option value="50">50</option>
                     <option value="100">100</option>
-                    <option value="150">150</option>
                   </select>
                 </div>
               </section>
             </main>
           </div>
+
+          {/* ========================================================================= */}
+          {/* MOBILE FILTER MODAL DRAWER (Bottom Sheet) */}
+          {/* ========================================================================= */}
+          {isMobileFilterOpen && (
+            <div class="fixed inset-0 z-50 flex items-end justify-center">
+              {/* Backdrop Blur */}
+              <div 
+                class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity animate-fade-in"
+                onClick={() => setIsMobileFilterOpen(false)}
+              ></div>
+
+              {/* Bottom Sheet Content */}
+              <div class="relative w-full max-w-lg bg-surface-container-lowest rounded-t-3xl max-h-[88vh] flex flex-col shadow-2xl z-10 transition-transform overflow-hidden">
+                {/* Drag Handle & Header */}
+                <div class="px-5 pt-3 pb-3 flex flex-col gap-2 border-b border-surface-variant/20">
+                  <div class="w-12 h-1 bg-surface-container-highest rounded-full mx-auto"></div>
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                      <h2 class="font-headline-md text-headline-md text-on-surface font-bold">Filtros de búsqueda</h2>
+                      {activeFiltersCount > 0 && (
+                        <span class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-[10px] font-extrabold">
+                          {activeFiltersCount} activos
+                        </span>
+                      )}
+                    </div>
+                    <button 
+                      onClick={() => setIsMobileFilterOpen(false)}
+                      class="w-8 h-8 rounded-full bg-surface-container-low flex items-center justify-center text-on-surface-variant hover:text-on-surface"
+                    >
+                      <span class="material-symbols-outlined text-[20px]">close</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Scrollable Filter Body */}
+                <div class="overflow-y-auto px-5 py-3 flex flex-col gap-4 no-scrollbar pb-6">
+                  {/* Smart Deduplication Highlight Box */}
+                  <div class="bg-secondary-fixed/30 rounded-xl p-3 flex flex-col gap-1.5 border border-secondary-fixed/50">
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-secondary">join_inner</span>
+                        <span class="font-label-md text-label-md text-on-surface font-bold">Unificar avisos repetidos</span>
+                      </div>
+                      <input 
+                        type="checkbox"
+                        checked={filters.group_duplicates}
+                        onChange={(e) => setFilters(prev => ({ ...prev, group_duplicates: e.target.checked, page: 1 }))}
+                        class="w-5 h-5 accent-secondary rounded cursor-pointer"
+                      />
+                    </div>
+                    <p class="font-body-sm text-[11px] text-on-surface-variant">
+                      Agrupa publicaciones de la misma propiedad entre Zonaprop, Mercado Libre, RE/MAX y Argenprop.
+                    </p>
+                  </div>
+
+                  {/* Operation Type */}
+                  <div class="space-y-1">
+                    <span class="font-bold text-xs text-on-surface uppercase tracking-wider text-slate-700">Tipo de Operación</span>
+                    <div class="grid grid-cols-2 gap-1 p-1 bg-surface-container-low rounded-lg">
+                      <button 
+                        onClick={() => setFilters(prev => ({ ...prev, operation_type: 'venta', page: 1 }))}
+                        class={`py-1.5 text-center font-label-md text-label-md rounded transition-colors ${filters.operation_type === 'venta' ? 'bg-surface-container-lowest text-on-surface shadow-sm font-bold' : 'text-on-surface-variant'}`}
+                      >
+                        Venta
+                      </button>
+                      <button 
+                        onClick={() => setFilters(prev => ({ ...prev, operation_type: 'alquiler', page: 1 }))}
+                        class={`py-1.5 text-center font-label-md text-label-md rounded transition-colors ${filters.operation_type === 'alquiler' ? 'bg-surface-container-lowest text-on-surface shadow-sm font-bold' : 'text-on-surface-variant'}`}
+                      >
+                        Alquiler
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Tipo de Propiedad */}
+                  <div class="space-y-1">
+                    <span class="font-bold text-xs text-on-surface uppercase tracking-wider text-slate-700">Tipo de Propiedad</span>
+                    <div class="space-y-1 font-body-sm text-body-sm text-on-surface">
+                      {[
+                        { id: 'departamento', label: 'Departamentos', count: stats?.by_type?.departamento || 1454 },
+                        { id: 'casa', label: 'Casas', count: stats?.by_type?.casa || 778 },
+                        { id: 'ph', label: 'PH', count: stats?.by_type?.ph || 3838 }
+                      ].map(t => (
+                        <label key={t.id} class="flex items-center justify-between p-1.5 rounded hover:bg-surface-container-low cursor-pointer">
+                          <span class="flex items-center gap-2">
+                            <input 
+                              type="checkbox"
+                              checked={filters.property_types.includes(t.id)}
+                              onChange={() => {
+                                const curr = filters.property_types;
+                                setFilters(prev => ({ ...prev, property_types: curr.includes(t.id) ? curr.filter(x => x !== t.id) : [...curr, t.id], page: 1 }));
+                              }}
+                              class="rounded text-primary cursor-pointer w-4 h-4"
+                            /> 
+                            {t.label}
+                          </span>
+                          <span class="font-metric-mono text-metric-mono text-on-surface-variant">({t.count.toLocaleString()})</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Barrios */}
+                  <NeighborhoodSelector
+                    catalog={catalog}
+                    selected={filters.neighborhoods}
+                    onChange={(neighs) => setFilters(prev => ({ ...prev, neighborhoods: neighs, page: 1 }))}
+                  />
+
+                  {/* Precio USD */}
+                  <div class="space-y-1">
+                    <span class="font-bold text-xs text-on-surface uppercase tracking-wider text-slate-700">Precio (USD)</span>
+                    <div class="grid grid-cols-2 gap-2">
+                      <div class="flex flex-col bg-surface-container-low rounded-xl px-3 py-2 border border-surface-variant/30">
+                        <span class="font-body-sm text-[10px] text-on-surface-variant font-semibold">Mínimo</span>
+                        <input 
+                          class="bg-transparent font-label-md text-label-md text-on-surface outline-none font-bold"
+                          type="number"
+                          placeholder="Mín"
+                          value={filters.min_price}
+                          onChange={(e) => setFilters(prev => ({ ...prev, min_price: e.target.value, page: 1 }))}
+                        />
+                      </div>
+                      <div class="flex flex-col bg-surface-container-low rounded-xl px-3 py-2 border border-surface-variant/30">
+                        <span class="font-body-sm text-[10px] text-on-surface-variant font-semibold">Máximo</span>
+                        <input 
+                          class="bg-transparent font-label-md text-label-md text-on-surface outline-none font-bold"
+                          type="number"
+                          placeholder="Máx"
+                          value={filters.max_price}
+                          onChange={(e) => setFilters(prev => ({ ...prev, max_price: e.target.value, page: 1 }))}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Superficie Total */}
+                  <div class="space-y-1">
+                    <span class="font-bold text-xs text-on-surface uppercase tracking-wider text-slate-700">Superficie Total (m²)</span>
+                    <div class="grid grid-cols-2 gap-2">
+                      <div class="flex flex-col bg-surface-container-low rounded-xl px-3 py-2 border border-surface-variant/30">
+                        <span class="font-body-sm text-[10px] text-on-surface-variant font-semibold">Mínimo m²</span>
+                        <input 
+                          class="bg-transparent font-label-md text-label-md text-on-surface outline-none font-bold"
+                          type="number"
+                          placeholder="Mín"
+                          value={filters.min_area}
+                          onChange={(e) => setFilters(prev => ({ ...prev, min_area: e.target.value, page: 1 }))}
+                        />
+                      </div>
+                      <div class="flex flex-col bg-surface-container-low rounded-xl px-3 py-2 border border-surface-variant/30">
+                        <span class="font-body-sm text-[10px] text-on-surface-variant font-semibold">Máximo m²</span>
+                        <input 
+                          class="bg-transparent font-label-md text-label-md text-on-surface outline-none font-bold"
+                          type="number"
+                          placeholder="Máx"
+                          value={filters.max_area}
+                          onChange={(e) => setFilters(prev => ({ ...prev, max_area: e.target.value, page: 1 }))}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Dormitorios */}
+                  <div class="space-y-1">
+                    <span class="font-bold text-xs text-on-surface uppercase tracking-wider text-slate-700">Dormitorios</span>
+                    <div class="grid grid-cols-4 gap-1.5">
+                      {[
+                        { val: 1, label: '1' },
+                        { val: 2, label: '2' },
+                        { val: 3, label: '3' },
+                        { val: 4, label: '4+' }
+                      ].map(d => {
+                        const isSel = filters.min_bedrooms === d.val;
+                        return (
+                          <button 
+                            key={d.val}
+                            type="button"
+                            onClick={() => setFilters(prev => ({ ...prev, min_bedrooms: isSel ? null : d.val, page: 1 }))}
+                            class={`py-2 text-center text-xs font-bold rounded-xl border transition-all ${isSel ? 'bg-primary text-white border-primary shadow-sm' : 'bg-surface-container-low text-on-surface border-surface-variant/30'}`}
+                          >
+                            {d.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Baños */}
+                  <div class="space-y-1">
+                    <span class="font-bold text-xs text-on-surface uppercase tracking-wider text-slate-700">Baños</span>
+                    <div class="grid grid-cols-3 gap-1.5">
+                      {[
+                        { val: 1, label: '1+' },
+                        { val: 2, label: '2+' },
+                        { val: 3, label: '3+' }
+                      ].map(b => {
+                        const isSel = filters.min_bathrooms === b.val;
+                        return (
+                          <button 
+                            key={b.val}
+                            type="button"
+                            onClick={() => setFilters(prev => ({ ...prev, min_bathrooms: isSel ? null : b.val, page: 1 }))}
+                            class={`py-2 text-center text-xs font-bold rounded-xl border transition-all ${isSel ? 'bg-primary text-white border-primary shadow-sm' : 'bg-surface-container-low text-on-surface border-surface-variant/30'}`}
+                          >
+                            {b.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Portales */}
+                  <div class="space-y-1">
+                    <span class="font-bold text-xs text-on-surface uppercase tracking-wider text-slate-700">Portales</span>
+                    <div class="space-y-1 font-body-sm text-body-sm text-on-surface">
+                      {[
+                        { id: 'zonaprop', name: 'Zonaprop', count: stats?.by_portal?.zonaprop || 3266 },
+                        { id: 'mercadolibre', name: 'Mercado Libre', count: stats?.by_portal?.mercadolibre || 1550 },
+                        { id: 'remax', name: 'RE/MAX', count: stats?.by_portal?.remax || 979 },
+                        { id: 'argenprop', name: 'Argenprop', count: stats?.by_portal?.argenprop || 180 },
+                        { id: 'mudafy', name: 'Mudafy', count: stats?.by_portal?.mudafy || 95 }
+                      ].map(p => (
+                        <label key={p.id} class="flex items-center justify-between p-1.5 rounded hover:bg-surface-container-low cursor-pointer">
+                          <span class="flex items-center gap-2">
+                            <input 
+                              type="checkbox"
+                              checked={filters.portals.includes(p.id)}
+                              onChange={() => {
+                                const curr = filters.portals;
+                                setFilters(prev => ({ ...prev, portals: curr.includes(p.id) ? curr.filter(x => x !== p.id) : [...curr, p.id], page: 1 }));
+                              }}
+                              class="rounded text-primary cursor-pointer w-4 h-4"
+                            />
+                            {p.name}
+                          </span>
+                          <span class="font-metric-mono text-metric-mono text-on-surface-variant">({p.count.toLocaleString()})</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Fixed Bottom Action Inside Sheet */}
+                <div class="p-4 bg-surface-container-lowest shadow-[0_-4px_16px_rgba(0,0,0,0.06)] border-t border-surface-variant/30 flex items-center gap-3">
+                  <button 
+                    onClick={clearAllFilters}
+                    class="py-3 px-4 rounded-xl text-on-surface-variant font-label-md text-label-md font-semibold hover:text-on-surface transition-colors" 
+                    type="button"
+                  >
+                    Limpiar
+                  </button>
+                  <button 
+                    onClick={() => setIsMobileFilterOpen(false)}
+                    class="flex-1 py-3 px-4 rounded-xl bg-primary text-on-primary font-label-md text-label-md font-bold shadow-md active:scale-95 transition-all text-center" 
+                    type="button"
+                  >
+                    Ver {total.toLocaleString()} Propiedades
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* MOBILE BOTTOM NAVIGATION BAR (Fixed Bottom) */}
+          {/* ========================================================================= */}
+          <nav class="block lg:hidden fixed bottom-0 w-full z-40 pb-safe bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(11,28,48,0.06)] border-t border-surface-variant/30">
+            <div class="flex justify-around items-center h-16 px-space-xs">
+              <button 
+                onClick={() => { setFilters(prev => ({ ...prev, only_favorites: false, page: 1 })); setActiveTab('explorador'); }}
+                class={`flex flex-col items-center justify-center gap-0.5 min-w-[64px] h-11 transition-colors ${!filters.only_favorites ? 'text-secondary font-bold' : 'text-on-surface-variant'}`}
+              >
+                <span class="material-symbols-outlined text-[22px]">travel_explore</span>
+                <span class="font-label-sm text-[11px]">Explorar</span>
+              </button>
+
+              <button 
+                onClick={() => setFilters(prev => ({ ...prev, only_favorites: true, page: 1 }))}
+                class={`relative flex flex-col items-center justify-center gap-0.5 min-w-[64px] h-11 transition-colors ${filters.only_favorites ? 'text-secondary font-bold' : 'text-on-surface-variant'}`}
+              >
+                <span class="material-symbols-outlined text-[22px]">favorite</span>
+                <span class="font-label-sm text-[11px]">Favoritos</span>
+                {stats?.total_favorites > 0 && (
+                  <span class="absolute top-0.5 right-3 px-1 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-[9px] leading-tight font-extrabold">
+                    {stats.total_favorites}
+                  </span>
+                )}
+              </button>
+
+              <button 
+                onClick={() => setFilters(prev => ({ ...prev, group_duplicates: !prev.group_duplicates, page: 1 }))}
+                class={`flex flex-col items-center justify-center gap-0.5 min-w-[64px] h-11 transition-colors ${filters.group_duplicates ? 'text-secondary font-bold' : 'text-on-surface-variant'}`}
+              >
+                <span class="material-symbols-outlined text-[22px]">bolt</span>
+                <span class="font-label-sm text-[11px]">Deduplicar</span>
+              </button>
+
+              <button 
+                onClick={handleTriggerScraper}
+                class="flex flex-col items-center justify-center gap-0.5 min-w-[64px] h-11 text-on-surface-variant hover:text-on-surface transition-colors"
+              >
+                <span class="material-symbols-outlined text-[22px]">sync</span>
+                <span class="font-label-sm text-[11px]">Escanear</span>
+              </button>
+            </div>
+          </nav>
+        </div>
+      );
+    }
         </div>
       );
     }
