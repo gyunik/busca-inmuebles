@@ -284,6 +284,7 @@
         min_area: '',
         max_area: '',
         min_bedrooms: null,
+        min_rooms: null,
         min_bathrooms: null,
         date_filter: '',
         only_favorites: false,
@@ -341,6 +342,9 @@
           }
           if (filters.min_bedrooms !== null && filters.min_bedrooms !== undefined) {
             params.append('min_bedrooms', filters.min_bedrooms);
+          }
+          if (filters.min_rooms !== null && filters.min_rooms !== undefined) {
+            params.append('min_rooms', filters.min_rooms);
           }
           if (filters.min_bathrooms !== null && filters.min_bathrooms !== undefined) {
             params.append('min_bathrooms', filters.min_bathrooms);
@@ -450,6 +454,7 @@
           min_area: '',
           max_area: '',
           min_bedrooms: null,
+          min_rooms: null,
           min_bathrooms: null,
           date_filter: '',
           only_favorites: false,
@@ -471,6 +476,7 @@
         if (filters.min_price || filters.max_price) count += 1;
         if (filters.min_area || filters.max_area) count += 1;
         if (filters.min_bedrooms !== null) count += 1;
+        if (filters.min_rooms !== null) count += 1;
         if (filters.min_bathrooms !== null) count += 1;
         if (filters.date_filter) count += 1;
         if (filters.only_favorites) count += 1;
@@ -741,6 +747,12 @@
                           <span onClick={() => setFilters(prev => ({ ...prev, min_bedrooms: null, page: 1 }))} class="material-symbols-outlined text-[14px] cursor-pointer text-gray-500 hover:text-black">close</span>
                         </span>
                       )}
+                      {filters.min_rooms !== null && (
+                        <span class="font-label-sm text-label-sm px-2 py-0.5 bg-surface-container-lowest rounded text-on-surface flex items-center gap-1 shadow-2xs">
+                          {filters.min_rooms === 5 ? '5+ amb' : `${filters.min_rooms} amb`}
+                          <span onClick={() => setFilters(prev => ({ ...prev, min_rooms: null, page: 1 }))} class="material-symbols-outlined text-[14px] cursor-pointer text-gray-500 hover:text-black">close</span>
+                        </span>
+                      )}
                       {filters.min_bathrooms !== null && (
                         <span class="font-label-sm text-label-sm px-2 py-0.5 bg-surface-container-lowest rounded text-on-surface flex items-center gap-1 shadow-2xs">
                           {filters.min_bathrooms}+ baños
@@ -873,6 +885,32 @@
                         onChange={(e) => setFilters(prev => ({ ...prev, max_area: e.target.value, page: 1 }))}
                       />
                     </div>
+                  </div>
+                </div>
+
+                {/* Ambientes */}
+                <div class="space-y-1">
+                  <span class="font-bold text-xs text-on-surface uppercase tracking-wider text-slate-700">Ambientes</span>
+                  <div class="grid grid-cols-5 gap-1.5">
+                    {[
+                      { val: 1, label: '1' },
+                      { val: 2, label: '2' },
+                      { val: 3, label: '3' },
+                      { val: 4, label: '4' },
+                      { val: 5, label: '5+' }
+                    ].map(a => {
+                      const isSel = filters.min_rooms === a.val;
+                      return (
+                        <button 
+                          key={a.val}
+                          type="button"
+                          onClick={() => setFilters(prev => ({ ...prev, min_rooms: isSel ? null : a.val, page: 1 }))}
+                          class={`py-2 text-center text-xs font-bold rounded-lg border transition-all ${isSel ? 'bg-primary text-white border-primary shadow-sm' : 'bg-white hover:bg-gray-50 text-slate-800 border-gray-300'}`}
+                        >
+                          {a.label}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -1538,7 +1576,33 @@
                     </div>
                   </div>
 
-                  {/* Dormitorios */}
+                  {/* Ambientes */}
+                <div class="space-y-1">
+                  <span class="font-bold text-xs text-on-surface uppercase tracking-wider text-slate-700">Ambientes</span>
+                  <div class="grid grid-cols-5 gap-1.5">
+                    {[
+                      { val: 1, label: '1' },
+                      { val: 2, label: '2' },
+                      { val: 3, label: '3' },
+                      { val: 4, label: '4' },
+                      { val: 5, label: '5+' }
+                    ].map(a => {
+                      const isSel = filters.min_rooms === a.val;
+                      return (
+                        <button 
+                          key={a.val}
+                          type="button"
+                          onClick={() => setFilters(prev => ({ ...prev, min_rooms: isSel ? null : a.val, page: 1 }))}
+                          class={`py-2 text-center text-xs font-bold rounded-lg border transition-all ${isSel ? 'bg-primary text-white border-primary shadow-sm' : 'bg-white hover:bg-gray-50 text-slate-800 border-gray-300'}`}
+                        >
+                          {a.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Dormitorios */}
                   <div class="space-y-1">
                     <span class="font-bold text-xs text-on-surface uppercase tracking-wider text-slate-700">Dormitorios</span>
                     <div class="grid grid-cols-4 gap-1.5">

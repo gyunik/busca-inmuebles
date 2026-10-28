@@ -30,6 +30,9 @@ def get_properties(
     max_area: Optional[float] = None,
     min_bedrooms: Optional[int] = None,
     max_bedrooms: Optional[int] = None,
+    min_rooms: Optional[int] = None,
+    max_rooms: Optional[int] = None,
+    rooms: Optional[int] = None,
     min_bathrooms: Optional[int] = None,
     days_ago: Optional[int] = None,
     date_filter: Optional[str] = None,
@@ -110,6 +113,19 @@ def get_properties(
             
     if max_bedrooms is not None and max_bedrooms < 4:
         query = query.filter(Property.bedrooms <= max_bedrooms)
+
+    # Ambientes (Rooms)
+    if rooms is not None and min_rooms is None:
+        min_rooms = rooms
+
+    if min_rooms is not None:
+        if min_rooms >= 5:
+            query = query.filter(Property.rooms >= 5)
+        else:
+            query = query.filter(Property.rooms >= min_rooms)
+
+    if max_rooms is not None and max_rooms < 5:
+        query = query.filter(Property.rooms <= max_rooms)
 
     # Bathrooms
     if min_bathrooms is not None:

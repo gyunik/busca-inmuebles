@@ -114,6 +114,11 @@ class ArgenpropScraper(BaseScraper):
                             if total_m2 is None and covered_m2 is not None:
                                 total_m2 = covered_m2
 
+                            # Location
+                            loc_elem = card.select_one(".card__title--primary, .card__location, .card__address")
+                            raw_location = loc_elem.get_text(strip=True) if loc_elem else (zone or "CABA")
+                            neigh, matched_zone = match_neighborhood(raw_location)
+
                             # Antiquity & Disposition
                             full_card_text = f"{title} {raw_location}".lower()
                             antiquity = None
@@ -132,11 +137,6 @@ class ArgenpropScraper(BaseScraper):
                             ori_match = re.search(r'\b(norte|sur|este|oeste|noreste|noroeste|sudeste|sudoeste)\b', full_card_text)
                             if ori_match:
                                 orientation = ori_match.group(1).capitalize()
-
-                            # Location
-                            loc_elem = card.select_one(".card__title--primary, .card__location, .card__address")
-                            raw_location = loc_elem.get_text(strip=True) if loc_elem else (zone or "CABA")
-                            neigh, matched_zone = match_neighborhood(raw_location)
 
                             # Image
                             img_elem = card.select_one("img[src*='http'], img[data-src*='http']")
