@@ -12,7 +12,7 @@ class ArgenpropScraper(BaseScraper):
     def __init__(self):
         super().__init__("argenprop")
 
-    def _build_url(self, property_type: Optional[str], zone: Optional[str], page: int = 1) -> str:
+    def _build_url(self, property_type: Optional[str], zone: Optional[str], page: int = 1, operation_type: str = "venta") -> str:
         t = "departamentos"
         if property_type:
             p_lower = property_type.lower()
@@ -22,6 +22,8 @@ class ArgenpropScraper(BaseScraper):
                 t = "ph"
             else:
                 t = "departamentos"
+
+        op = "alquiler" if operation_type and "alquiler" in operation_type.lower() else "venta"
 
         z = "capital-federal"
         if zone:
@@ -35,21 +37,22 @@ class ArgenpropScraper(BaseScraper):
             else:
                 z = "capital-federal"
 
-        url = f"https://www.argenprop.com/{t}/venta/{z}"
+        url = f"https://www.argenprop.com/{t}/{op}/{z}?orden-masnuevos"
         if page > 1:
-            url = f"{url}?pagina-{page}"
+            url = f"{url}&pagina-{page}"
         return url
 
     async def scrape(
         self, 
         property_type: Optional[str] = None, 
         zone: Optional[str] = None, 
-        max_pages: int = 2
+        max_pages: int = 2,
+        operation_type: str = "venta"
     ) -> List[Dict[str, Any]]:
         results = []
         async with httpx.AsyncClient(headers=self.headers, verify=False, follow_redirects=True, timeout=15.0) as client:
             for page in range(1, max_pages + 1):
-                url = self._build_url(property_type, zone, page)
+                url = self._build_url(property_type, zone, page, operation_type=operation_type)
                 try:
                     resp = await client.get(url)
                     if resp.status_code != 200:
@@ -156,7 +159,7 @@ class ArgenpropScraper(BaseScraper):
                                 "title": title,
                                 "url": href,
                                 "property_type": (property_type or "departamento").lower(),
-                                "operation_type": "venta",
+                                "operation_type": operation_type.lower(),
                                 "price_usd": price_usd,
                                 "price_currency_orig": "USD",
                                 "price_amount_orig": price_usd,

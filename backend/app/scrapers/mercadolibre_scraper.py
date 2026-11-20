@@ -12,7 +12,7 @@ class MercadoLibreScraper(BaseScraper):
     def __init__(self):
         super().__init__("mercadolibre")
 
-    def _build_url(self, property_type: Optional[str], zone: Optional[str], page: int = 1) -> str:
+    def _build_url(self, property_type: Optional[str], zone: Optional[str], page: int = 1, operation_type: str = "venta") -> str:
         # types: departamentos, casas, ph
         type_path = "departamentos"
         if property_type:
@@ -23,6 +23,8 @@ class MercadoLibreScraper(BaseScraper):
                 type_path = "ph"
             else:
                 type_path = "departamentos"
+
+        op_path = "alquiler" if operation_type and "alquiler" in operation_type.lower() else "venta"
 
         # zones: capital-federal, bsas-gba-norte, bsas-gba-sur, bsas-gba-oeste
         zone_path = "capital-federal"
@@ -37,7 +39,7 @@ class MercadoLibreScraper(BaseScraper):
             else:
                 zone_path = "capital-federal"
 
-        base = f"https://inmuebles.mercadolibre.com.ar/{type_path}/venta/{zone_path}/"
+        base = f"https://inmuebles.mercadolibre.com.ar/{type_path}/{op_path}/{zone_path}/_OrderId_BEGINS*DESC"
         if page > 1:
             offset = (page - 1) * 48 + 1
             base = f"{base}_Desde_{offset}"
@@ -47,12 +49,13 @@ class MercadoLibreScraper(BaseScraper):
         self, 
         property_type: Optional[str] = None, 
         zone: Optional[str] = None, 
-        max_pages: int = 2
+        max_pages: int = 2,
+        operation_type: str = "venta"
     ) -> List[Dict[str, Any]]:
         results = []
         async with httpx.AsyncClient(headers=self.headers, verify=False, follow_redirects=True, timeout=15.0) as client:
             for page in range(1, max_pages + 1):
-                url = self._build_url(property_type, zone, page)
+                url = self._build_url(property_type, zone, page, operation_type=operation_type)
                 try:
                     resp = await client.get(url)
                     if resp.status_code != 200:
@@ -167,7 +170,7 @@ class MercadoLibreScraper(BaseScraper):
                                 "title": title or f"{property_type or 'Inmueble'} en {neigh}",
                                 "url": item_url,
                                 "property_type": (property_type or "departamento").lower(),
-                                "operation_type": "venta",
+                                "operation_type": operation_type.lower(),
                                 "price_usd": price_usd,
                                 "price_currency_orig": "USD",
                                 "price_amount_orig": price_usd,
