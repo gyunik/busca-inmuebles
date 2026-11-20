@@ -26,11 +26,13 @@ class MercadoLibreScraper(BaseScraper):
 
         op_path = "alquiler" if operation_type and "alquiler" in operation_type.lower() else "venta"
 
-        # zones: capital-federal, bsas-gba-norte, bsas-gba-sur, bsas-gba-oeste
+        # zones: capital-federal, bsas-gba-norte, bsas-gba-sur, bsas-gba-oeste or capital-federal/palermo
         zone_path = "capital-federal"
         if zone:
-            z_lower = zone.lower()
-            if "norte" in z_lower:
+            z_lower = zone.lower().strip()
+            if "capital-federal/" in z_lower:
+                zone_path = z_lower
+            elif "norte" in z_lower:
                 zone_path = "bsas-gba-norte"
             elif "sur" in z_lower:
                 zone_path = "bsas-gba-sur"

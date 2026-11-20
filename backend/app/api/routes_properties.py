@@ -270,7 +270,9 @@ def get_stats(db: Session = Depends(get_db)):
     
     types = {
         "departamentos": raw_types.get("departamento", 0) + raw_types.get("departamentos", 0),
+        "departamento": raw_types.get("departamento", 0) + raw_types.get("departamentos", 0),
         "casas": raw_types.get("casa", 0) + raw_types.get("casas", 0),
+        "casa": raw_types.get("casa", 0) + raw_types.get("casas", 0),
         "ph": raw_types.get("ph", 0),
     }
 

@@ -256,7 +256,7 @@
         total_properties: 6070,
         total_favorites: 0,
         by_portal: { zonaprop: 3266, mercadolibre: 1550, remax: 979, argenprop: 180, mudafy: 95 },
-        by_type: { departamento: 1454, casa: 778, ph: 3838 },
+        by_type: { departamento: 2128, casa: 1198, ph: 4230 },
         by_zone: { CABA: 3583, 'GBA Norte': 664, 'GBA Sur': 416, 'GBA Oeste': 495 }
       };
 
@@ -806,9 +806,9 @@
                   <span class="font-bold text-xs text-on-surface uppercase tracking-wider text-slate-700">Tipo de Propiedad</span>
                   <div class="space-y-1 font-body-sm text-body-sm text-on-surface">
                     {[
-                      { id: 'departamento', label: 'Departamentos', count: stats?.by_type?.departamento || 1454 },
-                      { id: 'casa', label: 'Casas', count: stats?.by_type?.casa || 778 },
-                      { id: 'ph', label: 'PH', count: stats?.by_type?.ph || 3838 }
+                      { id: 'departamento', label: 'Departamentos', count: stats?.by_type?.departamento || 2128 },
+                      { id: 'casa', label: 'Casas', count: stats?.by_type?.casa || 1198 },
+                      { id: 'ph', label: 'PH', count: stats?.by_type?.ph || 4230 }
                     ].map(t => (
                       <label key={t.id} class="flex items-center justify-between p-1.5 rounded hover:bg-surface-container-low cursor-pointer">
                         <span class="flex items-center gap-2">
@@ -1101,19 +1101,19 @@
                     onClick={() => setFilters(prev => ({ ...prev, property_types: prev.property_types.includes('departamento') ? [] : ['departamento'], page: 1 }))}
                     class={`px-3 py-1 rounded-full font-label-sm text-label-sm flex-shrink-0 transition-colors ${filters.property_types.includes('departamento') ? 'bg-primary text-on-primary font-bold' : 'bg-surface-container text-on-surface-variant'}`}
                   >
-                    Departamentos ({stats?.by_type?.departamento?.toLocaleString() || '1.454'})
+                    Departamentos ({stats?.by_type?.departamento?.toLocaleString() || '2.128'})
                   </button>
                   <button 
                     onClick={() => setFilters(prev => ({ ...prev, property_types: prev.property_types.includes('ph') ? [] : ['ph'], page: 1 }))}
                     class={`px-3 py-1 rounded-full font-label-sm text-label-sm flex-shrink-0 transition-colors ${filters.property_types.includes('ph') ? 'bg-primary text-on-primary font-bold' : 'bg-surface-container text-on-surface-variant'}`}
                   >
-                    PH ({stats?.by_type?.ph?.toLocaleString() || '3.838'})
+                    PH ({stats?.by_type?.ph?.toLocaleString() || '4.230'})
                   </button>
                   <button 
                     onClick={() => setFilters(prev => ({ ...prev, property_types: prev.property_types.includes('casa') ? [] : ['casa'], page: 1 }))}
                     class={`px-3 py-1 rounded-full font-label-sm text-label-sm flex-shrink-0 transition-colors ${filters.property_types.includes('casa') ? 'bg-primary text-on-primary font-bold' : 'bg-surface-container text-on-surface-variant'}`}
                   >
-                    Casas ({stats?.by_type?.casa?.toLocaleString() || '778'})
+                    Casas ({stats?.by_type?.casa?.toLocaleString() || '1198'})
                   </button>
                 </div>
               </div>
@@ -1492,9 +1492,9 @@
                     <span class="font-bold text-xs text-on-surface uppercase tracking-wider text-slate-700">Tipo de Propiedad</span>
                     <div class="space-y-1 font-body-sm text-body-sm text-on-surface">
                       {[
-                        { id: 'departamento', label: 'Departamentos', count: stats?.by_type?.departamento || 1454 },
-                        { id: 'casa', label: 'Casas', count: stats?.by_type?.casa || 778 },
-                        { id: 'ph', label: 'PH', count: stats?.by_type?.ph || 3838 }
+                        { id: 'departamento', label: 'Departamentos', count: stats?.by_type?.departamento || 2128 },
+                        { id: 'casa', label: 'Casas', count: stats?.by_type?.casa || 1198 },
+                        { id: 'ph', label: 'PH', count: stats?.by_type?.ph || 4230 }
                       ].map(t => (
                         <label key={t.id} class="flex items-center justify-between p-1.5 rounded hover:bg-surface-container-low cursor-pointer">
                           <span class="flex items-center gap-2">
