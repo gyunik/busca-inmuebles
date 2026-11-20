@@ -24,6 +24,7 @@ def get_properties(
     zone: Optional[str] = None,
     portals: Optional[List[str]] = Query(None),
     portal: Optional[str] = None,
+    operation_type: Optional[str] = None,
     min_price: Optional[float] = None,
     max_price: Optional[float] = None,
     min_area: Optional[float] = None,
@@ -68,11 +69,24 @@ def get_properties(
     if only_favorites:
         query = query.filter(Property.is_favorite == True)
 
+    # Operation type (Venta / Alquiler)
+    if operation_type and operation_type.strip():
+        query = query.filter(Property.operation_type == operation_type.strip().lower())
+
     # Property types
     if property_types:
-        cleaned_types = [t.lower() for t in property_types if t]
+        cleaned_types = []
+        for t in property_types:
+            if not t: continue
+            tl = t.lower()
+            if tl in ['depto', 'deptos', 'departamentos', 'departamento']:
+                cleaned_types.extend(['departamento', 'departamentos'])
+            elif tl in ['casa', 'casas']:
+                cleaned_types.extend(['casa', 'casas'])
+            else:
+                cleaned_types.append(tl)
         if cleaned_types:
-            query = query.filter(Property.property_type.in_(cleaned_types))
+            query = query.filter(Property.property_type.in_(list(set(cleaned_types))))
 
     # Portals
     if portals:
@@ -249,10 +263,16 @@ def get_stats(db: Session = Depends(get_db)):
     total = db.query(Property).filter(Property.is_discarded == False).count()
     favorites = db.query(Property).filter(Property.is_favorite == True).count()
     
-    # Counts by property type
-    types = {}
+    # Counts by property type (normalized)
+    raw_types = {}
     for t, in db.query(Property.property_type).filter(Property.is_discarded == False).all():
-        types[t] = types.get(t, 0) + 1
+        raw_types[t] = raw_types.get(t, 0) + 1
+    
+    types = {
+        "departamentos": raw_types.get("departamento", 0) + raw_types.get("departamentos", 0),
+        "casas": raw_types.get("casa", 0) + raw_types.get("casas", 0),
+        "ph": raw_types.get("ph", 0),
+    }
 
     # Counts by portal
     portals = {}

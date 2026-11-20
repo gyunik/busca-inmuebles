@@ -80,14 +80,24 @@ class ArgenpropScraper(BaseScraper):
                             id_match = re.search(r'--(\d+)', href)
                             ext_id = id_match.group(1) if id_match else str(hash(href))[:10]
 
-                            # Price
+                            # Price & Currency
                             price_elem = card.select_one(".card__price, .price")
                             price_usd = 0.0
+                            price_currency = "USD"
+                            price_orig = 0.0
                             if price_elem:
-                                p_text = price_elem.get_text(strip=True).replace(".", "").replace(",", ".")
+                                raw_p_text = price_elem.get_text(strip=True)
+                                p_text = raw_p_text.replace(".", "").replace(",", ".")
                                 match_num = re.search(r'(\d+)', p_text)
                                 if match_num:
-                                    price_usd = float(match_num.group(1))
+                                    price_orig = float(match_num.group(1))
+                                    # If currency is $ (pesos) or operation is alquiler with value > 50.000, convert to USD
+                                    if "$" in raw_p_text and "u$s" not in raw_p_text.lower() and "usd" not in raw_p_text.lower():
+                                        price_currency = "ARS"
+                                        price_usd = round(price_orig / 1300.0, 0)
+                                    else:
+                                        price_currency = "USD"
+                                        price_usd = price_orig
 
                             # Features (m2, dorms, baños)
                             features = card.select(".card__main-features li, .main-features li")
@@ -158,9 +168,11 @@ class ArgenpropScraper(BaseScraper):
                                 "external_id": ext_id,
                                 "title": title,
                                 "url": href,
-                                "property_type": (property_type or "departamento").lower(),
+                                "property_type": "departamento" if (property_type or "").lower() in ["departamento", "departamentos", "depto"] else ("casa" if (property_type or "").lower() in ["casa", "casas"] else "ph"),
                                 "operation_type": operation_type.lower(),
                                 "price_usd": price_usd,
+                                "price_currency_orig": price_currency,
+                                "price_amount_orig": price_orig,
                                 "price_currency_orig": "USD",
                                 "price_amount_orig": price_usd,
                                 "total_area_m2": total_m2,

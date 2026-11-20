@@ -169,7 +169,7 @@ class MercadoLibreScraper(BaseScraper):
                                 "external_id": ext_id,
                                 "title": title or f"{property_type or 'Inmueble'} en {neigh}",
                                 "url": item_url,
-                                "property_type": (property_type or "departamento").lower(),
+                                "property_type": "departamento" if (property_type or "").lower() in ["departamento", "departamentos", "depto"] else ("casa" if (property_type or "").lower() in ["casa", "casas"] else "ph"),
                                 "operation_type": operation_type.lower(),
                                 "price_usd": price_usd,
                                 "price_currency_orig": "USD",
